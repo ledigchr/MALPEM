@@ -1,0 +1,469 @@
+#!/usr/bin/python
+
+# Copyright (c) 2015, Imperial College London, Christian Ledig
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+#     * Redistributions of source code must retain the above copyright
+#       notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above copyright
+#       notice, this list of conditions and the following disclaimer in the
+#       documentation and/or other materials provided with the distribution.
+#     * Neither the name of Imperial College London nor the
+#       names of its contributors may be used to endorse or promote products
+#       derived from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL IMPERIAL COLLEGE LONDON OR THE CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+import os
+import sys
+import zipfile
+import tarfile
+import urllib2
+import errno
+import platform
+
+# MALPEM version and source URL
+version = "1.2"
+base_url = "http://www.doc.ic.ac.uk/~cl6311/Material/MALPEM/"
+
+
+# Determine default installation path
+default_prefix = ""
+if platform.system() == "Windows":
+    default_prefix = os.path.join(os.getcwd(), "MALPEM-" + version)
+else:
+    if os.getuid() == 0:
+        if platform.system() == "Darwin" or platform.system() == "Linux":
+            default_prefix = "/opt/malpem-" + version
+            #default_prefix = "/usr/local/malpem-" + version
+
+    if not default_prefix:
+        #default_prefix = os.path.join(os.getcwd(), "malpem-" + version)
+        default_prefix = os.path.join(os.path.expanduser("~"), "malpem-" + version)
+
+
+# Resources -- in order of installation
+class Resource:
+    def __init__(self, name, module, desc, license, url, size, dest):
+        """Set meta-data of this resource."""
+        self.name      = name
+        self.module    = module
+        self.desc      = desc
+        self.license   = license
+        self.url       = url
+        self.dest      = dest
+        self.size      = size
+        self.requested = False
+
+resources = [
+    Resource(
+        name    = "MALPEM Framework",
+        desc    = """MALPEM whole-brain segmentation framework.""",
+        module  = "malpem",
+        license = "New BSD",
+        url     = base_url + "malpem-" + version + ".tar.gz",
+        size    = "less than 1MB",
+        dest    = "."
+    ),
+    Resource(
+        name    = "MNI Atlas",
+        desc    = """Brain template provided by the Montreal Neurological Institute, McGill University.""",
+        module  = "mni",
+        license = "Custom MIT",
+        url     = base_url + "atlas_mni.tar.gz",
+        size    = "about 20MB",
+        dest    = "atlas"
+    ),
+    Resource(
+        name    = "NMM Atlas",
+        desc    = """Neuromorphometrics Inc. labels for OASIS brain images.""",
+        license = "CC BY NC",
+        module  = "nmm",
+        url     = base_url + "atlas_nmm.tar.gz",
+        size    = "about 350MB",
+        dest    = "atlas"
+    ),
+    Resource(
+        name    = "IXI Atlas",
+        desc    = """IXI MR brain images used by PINCRAM brain extraction tool.""",
+        license = "CC BY SA 3.0",
+        module  = "pincram",
+        url     = base_url + "atlas_pincram.tar.gz",
+        size    = "about 1GB",
+        dest    = "atlas"
+    ),
+    Resource(
+        name    = "IRTK Tools",
+        desc    = """Selected pre-compiled binaries of IRTK (for Ubuntu 14.04).""",
+        license = "Academic, non-commercial use only (see http://www.doc.ic.ac.uk/~dr/software/copyright.html)",
+        module  = "irtk",
+        url     = base_url + "binaries_irtk.tar.gz",
+        size    = "about 18MB",
+        dest    = "lib"
+    ),
+    Resource(
+        name    = "ITK N4",
+        desc    = """Selected pre-compiled binaries (N4) of ITK (for Ubuntu 14.04).""",
+        license = "Apache 2.0",
+        module  = "itk",
+        url     = base_url + "binaries_itk.tar.gz",
+        size    = "about 5MB",
+        dest    = "lib"
+    ),
+    Resource(
+        name    = "NiftySeg Tools",
+        desc    = """Selected pre-compiled binaries (seg_maths, seg_stats) of NiftySeg (for Ubuntu 14.04).""",
+        license = "New BSD",
+        module  = "niftyseg",
+        url     = base_url + "binaries_niftyseg.tar.gz",
+        size    = "less than 1MB",
+        dest    = "lib"
+    )
+]
+
+care = Resource(
+    name    = "MALPEM Environment",
+    desc    = """System libraries and binaries required to execute MALPEM including the proot binary.""",
+    license = "GPLv2 (proot) and other licenses, please see 'CARE_package_contents.txt' "
+              "for a complete list of included files and check their respective licenses. The user agrees to be aware "
+              "of and comply with the individual licence terms of each of the packaged dependencies.",
+    module  = "care",
+    url     = base_url + "care_malpem.tar.gz",
+    size    = "about 210MB",
+    dest    = "lib"
+)
+
+resources.append(care)
+
+
+# ==============================================================================
+# File helpers
+# ==============================================================================
+def check_ex_dir(directory):
+    if not os.path.isdir(directory):
+        try:
+            os.makedirs(directory)
+
+        except OSError as e:
+            if e.errno == errno.EACCES:
+                print "ERROR: Can't create " + directory + " due to user permissions. Install as 'root' or choose " \
+                                                           "another installation directory."
+            else:
+                print "ERROR: Can't create " + directory + "."
+
+
+def chmod_dir(dst, attr):
+    # Don't forget to specify attr in octal. Ie. if you want to change permission to 755 attr needs to be set to 0755.
+    for root, dirs, files in os.walk(dst):
+        for d in dirs:
+            os.chmod(os.path.join(root, d), attr)
+        for f in files:
+            os.chmod(os.path.join(root, f), attr)
+
+
+def chown_dir(dst, uid, gid):
+    for root, dirs, files in os.walk(dst):
+        for d in dirs:
+            os.chown(os.path.join(root, d), uid, gid)
+        for f in files:
+            os.chown(os.path.join(root, f), uid, gid)
+
+
+def hardcopy_dir(src, dst):
+    working_dir = os.getcwd()
+    abs_dst = os.path.abspath(dst)
+    if not os.path.exists(dst):
+        os.mkdir(dst)
+
+    os.chdir(src)
+    for root, dirs, files in os.walk('.'):
+        if root.startswith(os.path.join(".", care.module)):
+            continue
+
+        cur_dst = os.path.join(abs_dst, root)
+        for d in dirs:
+            if not os.path.exists(os.path.join(cur_dst, d)):
+                os.mkdir(os.path.join(cur_dst, d))
+        for f in files:
+            fromfile = os.path.join(root, f)
+            to = os.path.join(cur_dst, f)
+            if not os.path.isfile(to) and not os.path.islink(to):
+                os.link(fromfile, to)
+
+    os.chdir(working_dir)
+
+
+# ==============================================================================
+# Resource installation helpers
+# ==============================================================================
+def download_resource(res, dest_file):
+    print " Downloading " + res.url + " to " + dest_file
+    try:
+        remote = urllib2.urlopen(res.url)
+    except urllib2.HTTPError as e:
+        print " The server couldn\'t fulfill the request."
+        print " Error code:" + str(e.code)
+        exit(1)
+    except urllib2.URLError as e:
+        print " Failed to reach a server."
+        print " Reason: " + e.reason
+        exit(1)
+
+    dest_file_handle = open(dest_file, 'wb')
+    meta = remote.info()
+    file_size = int(meta.getheaders("Content-Length")[0])
+
+    file_size_dl = 0
+    block_sz = 8192
+    while True:
+        buffer = remote.read(block_sz)
+        if not buffer:
+            break
+
+        file_size_dl += len(buffer)
+        dest_file_handle.write(buffer)
+        status = r" %7d / %d kB [%3.2f%%]" % (file_size_dl / 1024, file_size / 1024, file_size_dl * 100. / file_size)
+        status = status + chr(8)*(len(status)+1)
+        print status,
+
+    dest_file_handle.close()
+
+    if not os.path.isfile(dest_file):
+        print "ERROR: Failed to download resource " + res.name + " from " + res.url
+        exit(1)
+
+
+# Extracts a zip, tar, tar.gz, tar.bz2 file to target_dir
+# Note: extracted zip file content has permissions changed to 755
+def extract_resource(compressed_file, target_dir):
+    if not os.path.isfile(compressed_file):
+        print "Error: " + compressed_file + " does not exist!"
+        return
+
+    is_zip = False
+    print " Extracting file " + compressed_file + " to " + target_dir
+    if os.path.splitext(compressed_file)[1] == ".gz":
+        ztf = tarfile.open(compressed_file, "r:gz")
+    elif os.path.splitext(compressed_file)[1] == "bz2":
+        ztf = tarfile.open(compressed_file, "r:bz2")
+    elif os.path.splitext(compressed_file)[1] == ".tar":
+        ztf = tarfile.open(compressed_file, "r")
+    elif os.path.splitext(compressed_file)[1] == ".zip":
+        ztf = zipfile.ZipFile(compressed_file)
+        is_zip = True
+
+    ztf.extractall(target_dir)
+    if is_zip:
+        chmod_dir(target_dir, 0755)
+
+
+def resource_request(res):
+    # Prompt user whether this resource should be downloaded and installed.
+    if res.module == "malpem":
+        resource_exits = os.path.isfile(os.path.join(res.dest, "bin", "malpem"))
+    else:
+        resource_exits = os.path.isdir(os.path.join(res.dest, res.module))
+    if resource_exits:
+        print "Using existing installation of " + res.name + " in " + os.path.join(res.dest, res.module)
+        return False
+
+    # e.g. set via installer option argument
+    if res.requested:
+        print "Resource was installed already."
+        return res.requested
+
+    print "Resource:    " + res.name
+    print "Description: " + res.desc
+    print "License:     " + res.license
+    accept = raw_input("\nAccept license and download " + res.size + "? ([y]/n) ")
+    return accept == "" or accept == "y"
+
+
+def install_resource(res):
+    print "\n-- Installing " + res.name + " -- "
+
+    if not os.path.isdir(res.dest):
+        try:
+            os.makedirs(res.dest)
+        except OSError as e:
+            print "ERROR: Could not create directory " + res.dest,
+            if e.errno == errno.EACCES:
+                print " due to user permissions",
+            print "."
+            if e.errno == errno.EACCES:
+                print "      Installation may require administrative access. Either rerun installation"
+                print "      as 'root' user or choose a different installation directory."
+            sys.exit(1)
+
+    if os.path.splitext(res.url)[1] == ".zip":
+        res_file = "resource.zip"
+    elif os.path.splitext(res.url)[1] == ".tar":
+        res_file = "resource.tar"
+    elif os.path.splitext(res.url)[1] == ".gz":
+        res_file = "resource.tar.gz"
+    elif os.path.splitext(res.url)[1] == ".bz2":
+        res_file = "resource.tar.bz2"
+    else:
+        print "ERROR: Unknown format of package resource " + res.url
+        exit(1)
+
+    res_file = os.path.join(res.dest, res_file)
+    if os.path.isfile(res_file):
+        print " Removing " + res_file
+        os.remove(res_file)
+    download_resource(res, res_file)
+    extract_resource(res_file, res.dest)
+    if os.path.isfile(res_file):
+        print " Removing " + res_file
+        os.remove(res_file)
+
+    print "-- Done! --"
+
+
+# ==============================================================================
+# CARE package rootfs configuration
+# ==============================================================================
+def configure_rootfs(malpem_dir, rootfs):
+    #Configure rootfs directory of MALPEM CARE installation.
+
+    rootfs_malpem_dir = os.path.join(rootfs, "malpem")
+    print "rootfs installation directory is " + rootfs_malpem_dir
+
+    if not os.path.isdir(rootfs_malpem_dir):
+        os.makedirs(rootfs_malpem_dir)
+
+    # this directory needs to be writable by everyone
+    tmp_dir = os.path.join(rootfs, "tmp")
+    print "Changing permissions of " + tmp_dir + " to 777"
+    os.chmod(tmp_dir, 0777)
+
+    print "Creating links from " + malpem_dir + " to " + rootfs_malpem_dir
+    for d in ["atlas", "bin", "etc", "lib"]:
+        hardcopy_dir(os.path.join(malpem_dir, d), os.path.join(rootfs_malpem_dir, d))
+
+
+# ==============================================================================
+# MALPEM installation
+# ==============================================================================
+def install_malpem(prefix=None):
+
+    # Prompt user for installation directory
+    if not prefix:
+        if os.getuid() != 0:
+            print "\nSystem-wide installation for use by all users requires administrative rights."
+            print "Run this installer as 'root' user / Administrator if you want to install MALPEM"
+            print "in a default system location. Note that the installation directory can also"
+            print "be moved at any time after the installation to a new location.\n"
+
+        while not prefix:
+            prefix = raw_input("Enter installation directory or accept default [" + default_prefix + "]:\n")
+            if prefix == '':
+                prefix = default_prefix
+            else:
+                prefix = os.path.normpath(os.path.abspath(os.path.expanduser(prefix)))
+            if not os.path.exists(prefix):
+                try:
+                    os.makedirs(prefix)
+                except:
+                    print "Could not create directory " + prefix
+                    prefix = None
+            elif raw_input(prefix + " already exists. Continue? (y/[n]) ") != 'y':
+                prefix = None
+
+    print "Installing MALPEM in " + prefix
+
+    # Prompt user to accept license and whether resource should be downloaded
+    # make destination directory of resource an absolute path
+    print "\n" + "-" * 80
+    print "Select resources to be installed\n"
+
+    num_requested = 0
+    for res in resources:
+        res.dest = os.path.normpath(os.path.join(prefix, res.dest))
+        res.requested = resource_request(res)
+        if res.requested:
+            num_requested += 1
+
+    # Prompt user whether to configure rootfs directory
+    rootfs = os.path.join(prefix, care.dest, care.module, "rootfs")
+    if care.requested or os.path.isdir(rootfs):
+        do_configure_rootfs = raw_input("\nConfigure rootfs directory? ([y]/n) ") != "n"
+    else:
+        do_configure_rootfs = False
+
+    # Download and install requested resources
+    if num_requested > 0:
+        print "\n" + "-" * 80
+        print "Installing requested resources"
+        for res in resources:
+            if res.requested:
+                install_resource(res)
+
+    # Warn user about missing resources
+    num_missing = 0
+    for res in resources:
+        if res.module == "malpem":
+            if not os.path.isfile(os.path.join(res.dest, "bin", "malpem")):
+                num_missing += 1
+        else:
+            if not os.path.isdir(os.path.join(res.dest, res.module)):
+                num_missing += 1
+
+    if num_missing > 0:
+        print "\n" + "-" * 80
+        for res in resources:
+            if res.module == "malpem":
+                if not os.path.isfile(os.path.join(res.dest, "bin", "malpem")):
+                    print "WARNING: Missing " + res.name + "!"
+            else:
+                if not os.path.isdir(os.path.join(res.dest, res.module)):
+                    print "WARNING: Missing " + res.name + "!"
+
+    # Configure rootfs directory
+    if do_configure_rootfs and os.path.isdir(rootfs):
+        print "\n" + "-" * 80
+        print "Setting up rootfs"
+        configure_rootfs(prefix, rootfs)
+
+    return prefix, num_missing
+
+
+# ==============================================================================
+# Main
+# ==============================================================================
+if __name__ == "__main__":
+    if len(sys.argv) > 2:
+        print "usage: " + os.path.basename(sys.argv[0]) + " [<base_dir>]\n"
+        print "Downloads and installs the MALPEM software and its required resources.\n"
+        print "  base_dir   Installation directory. If not specified, a suitable default"
+        print "             location is suggested which can be either accepted at the prompt"
+        print "             or a different location interactively specified."
+        exit(1)
+
+    base_dir = None
+    if len(sys.argv) > 1:
+        base_dir = sys.argv[1]
+
+    [base_dir, num_missing] = install_malpem(prefix=base_dir)
+
+    if num_missing > 0:
+        print "\nFound missing resources. MALPEM might not work as expected."
+    else:
+        malpem_bin = os.path.join(base_dir, "bin", "malpem-proot")
+        if not os.path.isfile(malpem_bin):
+            malpem_bin = os.path.join(base_dir, "bin", "malpem")
+        if os.path.isfile(malpem_bin):
+            print "\nDone! To execute MALPEM, run: " + malpem_bin

@@ -1,0 +1,240 @@
+#! /bin/bash
+
+function ensureDir {
+        if [ ! -d $1 ]; then
+                mkdir $1;
+        fi
+}
+
+
+caredir=`dirname $0`/../lib/care/
+
+if [ ! -d $caredir ]; then
+        echo "ERROR: CARE directory not found!"
+        exit 1
+fi
+
+myGL=`locate 'libGL.so.1' | egrep '*.so.1$' | egrep ^/usr/lib/nvid`
+
+if [[ $myGL == "" ]]; then
+	printf "WARNING: Didn't find libGL library in /usr/lib/nvid*, offscreen rendering won't work (only relevant for pdf report)\n"
+else
+        printf "STATUS: Using libGL library in: ${myGL}\n"
+	myGL=`dirname $myGL | sed 's/lib/CARElib/g'`
+fi
+
+export XAUTHORITY="${XAUTHORITY:-$HOME/.Xauthority}"
+export ICEAUTHORITY="${ICEAUTHORITY:-$HOME/.ICEauthority}"
+
+nbargs=$#
+
+inputOK=1
+showhelp=0
+commandline="malpem"
+infile=""
+outdir=""
+
+if [[ $nbargs -eq 0 ]]; then
+	inputOK=0
+	showhelp=1
+	commandline="malpem -h"
+else
+	cnt=1
+	for var in "$@"; do
+       		if [[ "$var" == "-i" ]]; then
+        	        infile=${@:$(($cnt+1)):1}
+        	fi
+        	if [[ "$var" == "-o" ]]; then
+                	outdir=${@:$(($cnt+1)):1}
+        	fi
+        	if [[ "$var" == "-h" ]]; then
+        		showhelp=1
+			commandline="malpem -h"
+		fi
+        	cnt=$(($cnt+1))
+	done
+
+	if [[ $showhelp -eq 1 ]] || [[ $infile == "" ]] || [[ ! -f $infile ]]; then
+		inputOK=0
+		if [[ $showhelp -eq 0 ]]; then
+			echo "Input file: $infile doesn't exist"
+			commandline="malpem -h"
+		fi
+	fi
+fi
+
+if [[ $inputOK -eq 1 ]]; then
+	caretmp=$caredir/rootfs/tmp/
+	ensureDir $caretmp
+	careinput=$caretmp/input/
+	careoutput=$caretmp/output/
+	tmpname=`tempfile`
+	tmpname=`basename $tmpname`
+	tmpinput=$careinput/$tmpname
+	tmpoutput=$careoutput/$tmpname
+      	ensureDir $careinput
+      	ensureDir $tmpinput
+      	ensureDir $careoutput
+      	ensureDir $tmpoutput
+ 
+	cnt=1
+      	while [ $cnt -le $# ]; do
+        	curarg=${!cnt}
+        	middle=$(($cnt-1))
+        	right=$(($cnt+1))
+
+		if [ -f $curarg ]; then
+			curbase=`basename $curarg`
+	        	echo "Copying file $curarg to input directory:"
+                	cmdex="cp $curarg $tmpinput/"
+                	echo $cmdex
+                	$cmdex
+			set -- "${@:1:$middle}" "/tmp/input/$tmpname/$curbase" "${@:$right}"
+		fi
+        	if [[ "${!middle}" == "-o" ]]; then
+	       		set -- "${@:1:$middle}" "/tmp/output/$tmpname/" "${@:$right}"
+		fi
+		cnt=$(($cnt+1))
+      	done
+	commandline="malpem $@" 
+fi
+
+echo
+echo "Command in CARE environment:"
+echo $commandline
+echo
+PROOT="$caredir/proot"
+
+if [ ! -e ${PROOT} ]; then
+    PROOT=$(which proot)
+fi
+
+if [ -z ${PROOT} ]; then
+    echo '**********************************************************************'
+    echo '"proot" command not found, please get it from http://proot.me'
+    echo '**********************************************************************'
+    exit 1
+fi
+
+if [ x$PROOT_NO_SECCOMP != x ]; then
+    PROOT_NO_SECCOMP="PROOT_NO_SECCOMP=$PROOT_NO_SECCOMP"
+fi
+
+env --ignore-environment \
+PROOT_IGNORE_MISSING_BINDINGS=1 \
+$PROOT_NO_SECCOMP \
+'XDG_VTNR=8'  \
+'MANPATH=/usr/share/man:/usr/local/man'  \
+'SSH_AGENT_PID=3960'  \
+'XDG_SESSION_ID=3'  \
+'CLUTTER_IM_MODULE=xim'  \
+'GPG_AGENT_INFO=/run/user/611/keyring-aKrHIc/gpg:0:1'  \
+'HOST=chimborazo.doc.ic.ac.uk'  \
+'VTE_VERSION=3409'  \
+'TERM=xterm'  \
+'SHELL=/bin/tcsh'  \
+'USER=cl6311' \
+'USERNAME=cl6311'  \
+'HOME=/homes/cl6311'  \
+'XDG_MENU_PREFIX=gnome-flashback-'  \
+'XDG_SESSION_COOKIE'="$XDG_SESSION_COOKIE"  \
+'FSLMULTIFILEQUIT=TRUE'  \
+'WINDOWID=54525962'  \
+'GNOME_KEYRING_CONTROL=/run/user/611/keyring-aKrHIc'  \
+'OS=Linux'  \
+'GTK_MODULES=overlay-scrollbar'  \
+'GROUP=vip'  \
+'LD_LIBRARY_PATH=/etc:/lib64:/lib/x86_64-linux-gnu:/usr/lib:/usr/lib/python2.7/dist-packages:/usr/lib/python2.7/dist-packages/PIL:/usr/lib/python2.7/dist-packages/reportlab/lib:/usr/lib/python2.7/lib-dynload:/usr/lib/x86_64-linux-gnu':${myGL}:${LD_LIBRARY_PATH}  \
+'CONDOR_HOME=/usr/local/condor/release'  \
+'HOSTTYPE=x86_64-linux'  \
+'SSH_AUTH_SOCK=/run/user/611/keyring-aKrHIc/ssh'  \
+'SESSION_MANAGER'="$SESSION_MANAGER"  \
+'DEFAULTS_PATH=/usr/share/gconf/gnome-failsafe.default.path'  \
+'XDG_CONFIG_DIRS=/etc/xdg/xdg-gnome-failsafe:/etc/xdg'  \
+'PATH=/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/malpem/bin:/malpem/lib:/malpem/lib/irtk:/malpem/lib/niftyseg:/malpem/lib/itk'  \
+'DESKTOP_SESSION=gnome-failsafe'  \
+'QT_IM_MODULE=ibus'  \
+'QT_QPA_PLATFORMTHEME=appmenu-qt5'  \
+'FSLMACHTYPE=gnu_64-gcc4.8'  \
+'GDM_XSERVER_LOCATION=local'  \
+'PWD=/malpem'  \
+'XMODIFIERS=@im=ibus'  \
+'GNOME_KEYRING_PID=3849'  \
+'LANG=en_GB.utf8'  \
+'MANDATORY_PATH=/usr/share/gconf/gnome-failsafe.mandatory.path'  \
+'FSLMACHINELIST='  \
+'UBUNTU_MENUPROXY=0'  \
+'FSLREMOTECALL='  \
+'MDM_XSERVER_LOCATION=local'  \
+'GDMSESSION=gnome-failsafe'  \
+'KRB5CCNAME=FILE:/tmp/krb5cc_611_c5sDH6'  \
+'SHLVL=2'  \
+'XDG_SEAT=seat0'  \
+'OSTYPE=linux'  \
+'GNOME_DESKTOP_SESSION_ID=this-is-deprecated'  \
+'VENDOR=unknown'  \
+'MACHTYPE=x86_64'  \
+'XDG_SESSION_DESKTOP=gnome-failsafe'  \
+'PRINTER=ICTMono'  \
+'QT4_IM_MODULE=ibus'  \
+'XDG_DATA_DIRS=/usr/share/gnome-failsafe:/usr/share/gnome:/usr/local/share/:/usr/share/:/usr/share/mdm/'  \
+'DBUS_SESSION_BUS_ADDRESS'="$DBUS_SESSION_BUS_ADDRESS"  \
+'ARCH=amd64'  \
+'MDMSESSION=gnome-failsafe'  \
+'TEXTDOMAIN=im-config'  \
+'WINDOWPATH=8'  \
+'XDG_RUNTIME_DIR=/run/user/611'  \
+'DISPLAY'="$DISPLAY"  \
+'FSLLOCKDIR='  \
+'MDM_LANG=en_GB.utf8'  \
+'FSLOUTPUTTYPE=NIFTI_GZ'  \
+'XDG_CURRENT_DESKTOP=Unity'  \
+'GTK_IM_MODULE=ibus'  \
+'TEXTDOMAINDIR=/usr/share/locale/'  \
+'COLORTERM=gnome-terminal'  \
+'XAUTHORITY=/tmp/.mdmCHXAXX'  \
+"${PROOT}" \
+-b "/dev"  \
+-b "/proc"  \
+-b "/sys"  \
+-b "/run/shm"  \
+-b "/tmp/.X11-unix"  \
+-b "/tmp/.ICE-unix"  \
+-b "$XAUTHORITY:/tmp/.mdmCHXAXX"  \
+-b "/run/dbus/system_bus_socket"  \
+-b "/var/tmp/kdecache-$LOGNAME"  \
+-k '3.13.0-45-generic'  \
+-w '/malpem/bin'  \
+-r "$caredir/rootfs" \
+-b "$caredir/rootfs" \
+-b "/usr/lib/":"/usr/CARElib" \
+$commandline
+
+status=$?
+if [ $status -ne 0 ] && [ $nbargs -eq 0 ]; then
+echo "care: The reproduced execution didn't return the same exit status as the"
+echo "care: original execution.  If it is unexpected, please report this bug"
+echo "care: to CARE/PRoot developers:"
+echo "care:     * mailing list: reproducible@googlegroups.com; or"
+echo "care:     * forum: https://groups.google.com/forum/?fromgroups#!forum/reproducible; or"
+echo "care:     * issue tracker: https://github.com/cedric-vincent/PRoot/issues/"
+fi
+
+if [[ $inputOK -eq 1 ]]; then
+	if [ ! -d $outdir ]; then
+		echo "Output directory $outdir doesn't exist, creating it"
+		mkdir $outdir
+	fi
+
+	echo "Moving results to output directory: $outdir"
+	mv $tmpoutput/* $outdir/        
+	if [[ -d $tmpoutput ]] && [[ $tmpoutput != "" ]]; then
+	      rm -r $tmpoutput
+        fi
+
+	echo "Cleaning up input directory: $tmpinput"
+	if [[ -d $tmpinput ]] && [[ $tmpinput != "" ]]; then
+		rm -r $tmpinput
+	fi
+fi
+exit $status

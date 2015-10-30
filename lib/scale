@@ -1,0 +1,51 @@
+#!/bin/bash
+
+# Author: Christian Ledig, 2015
+
+input_ms=$1;
+output_ms=$2;
+HOMEDIR_ms=$3;
+
+curdir=`dirname $0`
+PATH=$PATH:${curdir}/../
+
+mkdir $HOMEDIR_ms/tmp/
+
+input_ms=$1
+output_ms=$2
+
+input_base_ms=`basename $input_ms .nii.gz`
+tmp_ms=$HOMEDIR_ms/tmp/${input_base_ms}_tmp.nii.gz
+peaks_ms=$HOMEDIR_ms/tmp/${input_base_ms}_peaks.nii.gz
+range_ms=$HOMEDIR_ms/tmp/${input_base_ms}_range.csv
+
+maths_ms=seg_maths
+stats_ms=seg_stats
+
+erosions_ms=5
+cl_erosion $erosions_ms $input_ms $tmp_ms
+
+$stats_ms $tmp_ms -t 1 -R > $range_ms
+
+
+min_ms=$(cut -d ' ' -f 1 $range_ms)
+max_ms=$(cut -d ' ' -f 2 $range_ms)
+
+echo $min_ms
+echo $max_ms
+
+$maths_ms $input_ms -thr $max_ms -bin -mul 255 $peaks_ms
+
+fac_ms=$(echo "scale=5; 255/$max_ms" | /usr/bin/bc)
+echo $fac_ms
+
+$maths_ms $input_ms -mul $fac_ms -uthr 255 -add $peaks_ms $output_ms
+$maths_ms $output_ms -thr 257 -bin -mul 255 $peaks_ms
+$maths_ms $output_ms -uthr 256 -add $peaks_ms $output_ms
+
+$maths_ms $input_ms -uthr 0 -mul -1 -bin -mul -1 $tmp_ms
+$maths_ms $output_ms -thr 0 -add $tmp_ms $output_ms
+
+rm $tmp_ms
+rm $peaks_ms
+rm $range_ms

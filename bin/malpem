@@ -1,0 +1,441 @@
+#!/usr/bin/python
+
+# AUTHOR: Christian Ledig
+#         Imperial College London
+#         March, 2015
+#         Please cite "Ledig, et al., Medical Image Analysis, Robust whole-brain segmentation: Application to traumatic
+#                      brain injury, 21(1), pp. 40-58, 2015"
+
+#         see license file in project root directory
+
+
+# THINGS THAT NEED TO BE SET UP
+#
+#
+# ATLASES:
+#   atlas/nmm/labels            (NMM manual segmentations)
+#   atlas/nmm/mri_masked        (brain extracted MR images of atlases)
+#   atlas/nmm/mri_masked_scaled (intensity normalised and brain extracted MR images of atlases)
+#
+#
+#   pincram structure:
+#   atlas/pincram/posnorm
+#   atlas/pincram/limages/full
+#   atlas/pincram/limages/margin-d5
+#   atlas/pincram/lmasks/full
+#   atlas/pincram/lmasks/margin-d5
+#
+#   MNI template:
+#   atlas/mni/
+#
+# BINARIES:
+#   lib/irtk/cl_malpem
+#   lib/irtk/cl_apply_mask
+#   lib/irtk/transformation
+#   lib/irtk/ireg
+#   lib/niftyseg/seg_maths
+#   lib/niftyseg/seg_stats
+#   lib/pincram/pincram-0.2.3.sh
+#   lib/itk/N4
+#   lib/scale
+#
+# CONFIGURATION:
+#   etc/ireg.cfg         (config file for nonrigid registration)
+#   etc/conn139_HC.mrf   (config file for Markov Random Field of MALPEM)
+#   etc/NMM_info.csv     (config file for Neuromorphometrics atlas - needed to create report)
+#
+
+import os
+import sys
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lib"))
+
+import shutil
+import time
+import argparse
+import malpem.mytools
+import malpem.bias_correction
+import malpem.brain_extraction
+import malpem.label_fusion
+import malpem.label_refinement
+import malpem.intensity_normalise
+import malpem.registration
+import malpem.mytools
+import malpem.report
+
+from multiprocessing import Process
+
+## SET MALPEM BASE DIRECTORY ##
+malpem.mytools.__malpem_debug__ = "0"
+malpem.mytools.__malpem_path__ = os.path.dirname(os.path.abspath(__file__))
+
+if os.path.split(malpem.mytools.__malpem_path__)[1] == "bin":
+    malpem.mytools.__malpem_path__ = os.path.split(malpem.mytools.__malpem_path__)[0]
+
+## SETUP OF ATLAS DIRECTORY ##
+a_dir = os.path.join(malpem.mytools.__malpem_path__, "atlas", "nmm")
+a_images_dir = os.path.join(a_dir, "mri_masked/")
+a_images_scaled_dir = os.path.join(a_dir, "mri_masked_scaled/")
+a_mni_dofs_dir = os.path.join(a_dir, "mninorm/")
+a_labels_dir = os.path.join(a_dir, "labels/")
+
+def main(argv):
+## PARSE COMMAND LINE PARAMETERS ##
+    parser = argparse.ArgumentParser(description="MALPEM whole-brain segmentation framework.", add_help=False)
+
+    req_group = parser.add_argument_group("Required arguments")
+    req_group.add_argument("-i", "--input_file", help="input NIfTI file (required)", required=True)
+    req_group.add_argument("-o", "--output_dir", help="output folder, will be created if it doesn't exist (required)",
+                           required=True)
+
+    opt_group = parser.add_argument_group("Options")
+    opt_group.add_argument("-h", "--help", action="help", help="show this help message and exit")
+    opt_group.add_argument("-f", "--field_strength", help="field strength, 1.5T/3T", default="1.5T", choices=["1.5T", "3T"])
+    opt_group.add_argument("-t", "--threads", help="maximum number of parallel threads", default="1")
+    opt_group.add_argument("-m", "--mask", dest="input_mask",
+                        help="use this brain mask and do not perform pincram brain extraction", default="")
+    opt_group.add_argument("-s", "--segmentation", dest="input_segmentation",
+                        help="create a report for this input segmentation. (Required: corresponding input intensity image, "
+                             "Optional: brain mask for screenshots in pdf report)", default="")
+    opt_group.add_argument("--mni_init_dof", help="this rigid/affine transformation will be used to initialise the "
+                                               "alignment to MNI space (cf. atlas/mni/)", default="")
+
+    opt_group.add_argument("-c", "--cleanup", help="delete temporary files and atlas deformation fields",
+                           action="store_true", default=False)
+    opt_group.add_argument("-p", "--pincram_only", help="exit after the pincram brain extraction",
+                           action="store_true", default=False)
+    opt_group.add_argument("--noN4", dest="do_n4", help="do not perform initial N4 bias correction",
+                           action="store_false", default=True)
+    opt_group.add_argument("--noN4_after_pincram", dest="do_n4_pincram", help="do not perform another N4 bias correction "
+                            "after brain extraction", action="store_false", default=True)
+    opt_group.add_argument("--noreport", dest="create_report", help="do not create report files",
+                           action="store_false", default=True)
+    opt_group.add_argument("--nosubdir", dest="create_subdir", help="do not create an extra subdirectory for output files",
+                           action="store_false", default=True)
+
+    args = parser.parse_args()
+
+## DEFINITION/CHECK AND OUTPUT OF INPUT VARIABLES
+    # input file
+    input_file = args.input_file
+
+    # output directory
+    output_dir = args.output_dir
+
+    # This is either 1.5T or 3T
+    field_strength = args.field_strength
+
+    # max number of jobs run in parallel
+    threads = args.threads
+
+    # potential input mask
+    input_mask = args.input_mask
+
+    # potential input segmentation
+    input_segmentation = args.input_segmentation
+
+    # mni initialisation dof
+    mni_init_dof = args.mni_init_dof
+
+    # perform N4 bias correction by default
+    do_n4 = args.do_n4
+
+    # perform another N4 step after the brain extraction using the mask
+    do_n4_pincram = args.do_n4_pincram
+
+    # stop after brain extraction
+    pincram_only = args.pincram_only
+
+    # clean up after finished
+    cleanup = args.cleanup
+
+    # create report after finished
+    create_report = args.create_report
+
+    # create subdir for output
+    create_subdir = args.create_subdir
+
+
+    malpem.mytools.ensure_file(input_file, "input_file")
+    if not mni_init_dof == "":
+        malpem.mytools.ensure_file(input_file, "mni_init_dof")
+
+    if not input_segmentation == "":
+        malpem.mytools.ensure_file(input_segmentation, "segmentation")
+
+    if not input_mask == "":
+        malpem.mytools.ensure_file(input_file, "mask")
+
+    print "--------------------------------------"
+    print "Input file: " + input_file
+    print "Output directory: " + output_dir
+    print "Field strength: " + field_strength
+    print "Max. threads: " + str(threads)
+
+    print "Using input mask: ",
+    if input_mask:
+        print input_mask
+    else:
+        print "False"
+
+    print "Using input segmentation: ",
+    if input_segmentation:
+        print input_segmentation + "(Won't do anything except creating a report for this!)"
+    else:
+        print "False"
+
+    print "Using transformation to initialise MNI alignment: ",
+    if mni_init_dof:
+        print mni_init_dof
+    else:
+        print "False"
+
+    print "Performing initial bias correction: " + str(do_n4)
+    print "Stopping after brain extraction: " + str(pincram_only)
+    print "Perform another N4 bias correction after the brain extraction: " + str(do_n4_pincram)
+    print "Create a subdirectory for output: " + str(create_subdir)
+    print "Create final pdf report: " + str(create_report)
+    print "Will clean up once finished: " + str(cleanup)
+    print "--------------------------------------\n"
+
+
+## SETUP ALL FILENAMES ##
+## I) General output files
+    base_file = malpem.mytools.nifty_basename(input_file)
+    malpem.mytools.check_ex_dir(output_dir)
+
+    if create_subdir:
+        output_dir = os.path.join(output_dir, base_file + "_" + time.strftime("%d-%m-%y_%H-%M-%S"))
+
+    malpem.mytools.check_ex_dir(output_dir)
+
+    tmp_dir = os.path.join(output_dir, "tmp/")
+    malpem.mytools.check_ex_dir(tmp_dir)
+
+    image_n4 = os.path.join(output_dir, base_file + "_N4.nii.gz")
+    image_n4_masked = os.path.join(output_dir, base_file + "_N4_masked.nii.gz")
+
+    if not do_n4:
+        image_n4 = os.path.join(output_dir, base_file + "_noN4.nii.gz")
+        image_n4_masked = os.path.join(output_dir, base_file + "_noN4_masked.nii.gz")
+        shutil.copyfile(input_file, image_n4)
+
+    image_mask = os.path.join(output_dir, base_file + "_mask.nii.gz")
+    if not input_mask == "":
+        shutil.copyfile(input_mask, image_mask)
+
+    if not mni_init_dof == "":
+        shutil.copyfile(mni_init_dof, os.path.join(output_dir, "mni_init.dof.gz"))
+
+    segmentation_fusion = os.path.join(output_dir, base_file + "_fusion.nii.gz")
+    segmentation_malpem = os.path.join(output_dir, base_file + "_MALPEM.nii.gz")
+    segmentation_malpem_tissues = os.path.join(output_dir, base_file + "_MALPEM_tissues.nii.gz")
+
+    report_file = os.path.join(output_dir, base_file + "_Report.pdf")
+
+    fusion_prob_dir = os.path.join(output_dir, "prob_fusion/")
+    malpem.mytools.check_ex_dir(fusion_prob_dir)
+    fusion_prob_base = os.path.join(fusion_prob_dir, "probabilityMap")
+
+    malpem_prob_dir = os.path.join(output_dir, "prob_MALPEM/")
+    malpem.mytools.check_ex_dir(malpem_prob_dir)
+
+
+## II) Files for atlas propagation ##
+    a_images = os.listdir(a_images_dir)
+    a_count = len(a_images)
+
+    # labels to be propagated
+    a_labels = []
+    # intensity normalised atlas images for weighted label fusion
+    a_images_scaled = []
+    # propagated labels
+    a_labels_tgtspc = []
+    # propagated images
+    a_images_scaled_tgtspc = []
+    # rigid dofs of atlas images to MNI space (used for initialisation)
+    a_mni_dofs = []
+    # initialisation dofs for atlas registration (usually combined rigid transformations to MNI space)
+    a_init_dofs = []
+    # dofs (tgt=input, src=atlas) used for atlas propagation (will be calculated)
+    a_dofs = []
+
+    a_dofs_dir = os.path.join(output_dir, "dofs/")
+    malpem.mytools.check_ex_dir(a_dofs_dir)
+    a_prop_dir = os.path.join(tmp_dir, "propagate/")
+    malpem.mytools.check_ex_dir(a_prop_dir)
+
+    for i in range(a_count):
+        # these files will be propagated
+        a_labels.append(os.path.join(a_labels_dir, a_images[i]))
+
+        a_images_scaled.append(os.path.join(a_images_scaled_dir, a_images[i]))
+
+        a_base_file = malpem.mytools.nifty_basename(a_images[i])
+        a_mni_dofs.append(os.path.join(a_mni_dofs_dir, a_base_file + ".dof.gz"))
+
+        # these files will be created during atlas propagation
+        a_dofs.append(os.path.join(a_dofs_dir, "dof-" + a_base_file + "-" + base_file + ".dof.gz"))
+        a_init_dofs.append(os.path.join(a_dofs_dir, "init-" + a_base_file + "-" + base_file + ".dof.gz"))
+
+        a_labels_tgtspc.append(os.path.join(a_prop_dir, "seg-" + a_base_file + "-" + base_file + ".nii.gz"))
+        a_images_scaled_tgtspc.append(os.path.join(a_prop_dir, "mri-" + a_base_file + "-" + base_file + ".nii.gz"))
+
+        a_images[i] = os.path.join(a_images_dir, a_images[i])
+
+        malpem.mytools.ensure_file(a_labels[i], "")
+        malpem.mytools.ensure_file(a_images[i], "")
+        malpem.mytools.ensure_file(a_images_scaled[i], "")
+
+## START PROCESSING ##
+    task_name = "Whole-brain segmentation pipeline (MALPEM)"
+    start_time = malpem.mytools.start_task(task_name)
+
+    # If the user provided an input segmentation, create a report and exit
+    if not input_segmentation == "":
+        malpem.report.create_report(input_file, input_mask, input_segmentation,
+                                     report_file, output_dir)
+        print "Stopping after creating a report for input segmentation"
+        malpem.mytools.finished_task(start_time, task_name)
+        exit(0)
+
+    # Run N4 Bias Correction (ITK implementation, parameters depend on 1.5T/3T)
+    if not os.path.isfile(image_n4):
+        if not os.path.isfile(image_mask):
+            malpem.bias_correction.N4(input_file, image_n4, field_strength, "", output_dir)
+        else:
+            malpem.bias_correction.N4(input_file, image_n4, field_strength, image_mask, output_dir)
+    else:
+        print "Skipping bias correction: file exists / specified by user"
+
+    # Align with MNI space (helpful as initialisation for both multi atlas label propagation and brain extraction)
+    mni_dof = os.path.join(output_dir, "mni-" + base_file + ".dof.gz")
+    if not os.path.isfile(mni_dof):
+        malpem.registration.dof2mni(image_n4, mni_dof, "rigid", output_dir)
+    else:
+        print "Skipping MNI alignment (" + mni_dof + "): file exists"
+
+    # Run brain extraction (pincram, Heckemann et al. 2015)
+    if not os.path.isfile(image_n4_masked):
+        if not os.path.isfile(image_mask):
+            malpem.brain_extraction.pincram(image_n4, image_mask, threads, output_dir)
+            # Note that the MNI transformation above was calculated with the originally N4 corrected image
+            if do_n4_pincram:
+                print "Running a second bias correction with the calculated brain mask"
+                malpem.bias_correction.N4(image_n4, image_n4, field_strength, image_mask, output_dir)
+
+        malpem.brain_extraction.apply_mask(image_n4, image_n4_masked, image_mask)
+    else:
+        print "Skipping brain extraction: file exists / mask specified by user"
+
+    if pincram_only:
+        print "Stopping after brain extraction as specified by user"
+        malpem.mytools.finished_task(start_time, task_name)
+        exit(0)
+
+    # Run Label Propagation
+    p_list = []
+    cnt = 0
+    if not os.path.isfile(segmentation_fusion):
+        task_name_propagation = "Label propagation"
+        start_time_propagation = malpem.mytools.start_task(task_name)
+        for i in range(len(a_images)):
+            if not os.path.isfile(a_dofs[i]):
+                malpem.registration.dofcombine(a_mni_dofs[i], mni_dof, a_init_dofs[i], False, True, output_dir)
+                p = Process(target=malpem.registration.register, args=(image_n4_masked, a_images[i], a_init_dofs[i],
+                                                                       a_dofs[i], "nonrigid", output_dir))
+                p.start()
+                p_list.append(p)
+                cnt += 1
+                if cnt % int(threads) == 0:
+                    for p in p_list:
+                        p.join()
+                    p_list = []
+                    cnt = 0
+            else:
+                print "Skipping registration (" + a_dofs[i] + "): file exists"
+
+        for p in p_list:
+            p.join()
+        p_list = []
+
+        for i in range(len(a_images)):
+            if not os.path.isfile(a_images_scaled_tgtspc[i]):
+                p = Process(target=malpem.registration.transform, args=(image_n4_masked, a_images_scaled[i],
+                                                 a_images_scaled_tgtspc[i], a_dofs[i], "linear", output_dir))
+                p.start()
+                p_list.append(p)
+                cnt += 1
+                if cnt % int(threads) == 0:
+                    for p in p_list:
+                        p.join()
+                    p_list = []
+                    cnt = 0
+            else:
+                print "Skipping transformation (" + a_images_scaled_tgtspc[i] + "): file exists"
+
+            if not os.path.isfile(a_labels_tgtspc[i]):
+                p = Process(target=malpem.registration.transform, args=(image_n4_masked, a_labels[i],
+                                                a_labels_tgtspc[i], a_dofs[i], "nn", output_dir))
+                p.start()
+                p_list.append(p)
+                cnt += 1
+                if cnt % int(threads) == 0:
+                    for p in p_list:
+                        p.join()
+                    p_list = []
+                    cnt = 0
+            else:
+                print "Skipping transformation (" + a_labels_tgtspc[i] + "): file exists"
+
+        for p in p_list:
+            p.join()
+            p_list = []
+
+        malpem.mytools.finished_task(start_time_propagation, task_name_propagation)
+
+        # Run Label Fusion
+        malpem.label_fusion.lwf(image_n4_masked, a_images_scaled_tgtspc, a_labels_tgtspc, segmentation_fusion,
+                                fusion_prob_base, output_dir)
+    else:
+        print "Skipping label fusion: file exists"
+
+    if not os.path.isfile(segmentation_malpem):
+        # Run EM-refinement (MALPEM, Ledig et al. 2015)
+        malpem.label_refinement.malpem_refinement(image_n4_masked, fusion_prob_base, segmentation_malpem,
+                                                  malpem_prob_dir, output_dir)
+    else:
+        print "Skipping MALPEM: file exists"
+
+    if not os.path.isfile(segmentation_malpem_tissues):
+        malpem.label_fusion.create_tissue_seg(image_n4_masked, segmentation_malpem, segmentation_malpem_tissues, output_dir)
+        malpem.label_fusion.create_tissue_maps(image_n4_masked, malpem_prob_dir, output_dir)
+    else:
+        print "Skipping creation of tissue maps: file exists"
+
+
+    # Create report
+    if create_report:
+        if not os.path.isfile(report_file):
+            malpem.report.create_report(image_n4, image_mask, segmentation_malpem,
+                                     report_file, output_dir)
+        else:
+            print "Skipping Create Report: file exists"
+
+
+    # Clean up if necessary
+    if cleanup:
+        task_name_cu = "Cleaning up directories / deleting tmp files"
+        start_time_cu = malpem.mytools.start_task(task_name_cu)
+        shutil.rmtree(os.path.join(output_dir, "tmp"))
+        shutil.rmtree(os.path.join(output_dir, "tmp_fusion"))
+        shutil.rmtree(os.path.join(output_dir, "tmp_malpem"))
+        shutil.rmtree(os.path.join(output_dir, "tmp_pincram"))
+        shutil.rmtree(os.path.join(output_dir, "dofs"))
+	
+	malpem.mytools.finished_task(start_time_cu, task_name_cu)
+
+    malpem.mytools.finished_task(start_time, task_name)
+
+if __name__ == "__main__":
+    main(sys.argv[1:])

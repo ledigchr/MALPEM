@@ -1,0 +1,150 @@
+0,Background,Background,NA
+1,3rdVentricle,3rdVentricle,NA
+2,4thVentricle,4thVentricle,NA
+3,RightAccumbensArea,RightAccumbensArea,right
+4,LeftAccumbensArea,LeftAccumbensArea,left
+5,RightAmygdala,RightAmygdala,right
+6,LeftAmygdala,LeftAmygdala,left
+7,BrainStem,BrainStem,NA
+8,RightCaudate,RightCaudate,right
+9,LeftCaudate,LeftCaudate,left
+10,RightCerebellumExterior,RightCerebellumExterior,right
+11,LeftCerebellumExterior,LeftCerebellumExterior,left
+12,RightCerebellumWhiteMatter,RightCerebellumWhiteMatter,right
+13,LeftCerebellumWhiteMatter,LeftCerebellumWhiteMatter,left
+14,RightCerebralExterior,RightCerebralExterior,right
+15,LeftCerebralExterior,LeftCerebralExterior,left
+16,RightCerebralWhiteMatter,RightCerebralWhiteMatter,right
+17,LeftCerebralWhiteMatter,LeftCerebralWhiteMatter,left
+18,CSF,CSF,NA
+19,RightHippocampus,RightHippocampus,right
+20,LeftHippocampus,LeftHippocampus,left
+21,RightInfLatVent,RightInfLatVent,right
+22,LeftInfLatVent,LeftInfLatVent,left
+23,RightLateralVentricle,RightLateralVentricle,right
+24,LeftLateralVentricle,LeftLateralVentricle,left
+25,RightPallidum,RightPallidum,right
+26,LeftPallidum,LeftPallidum,left
+27,RightPutamen,RightPutamen,right
+28,LeftPutamen,LeftPutamen,left
+29,RightThalamusProper,RightThalamusProper,right
+30,LeftThalamusProper,LeftThalamusProper,left
+31,RightVentralDC,RightVentralDC,right
+32,LeftVentralDC,LeftVentralDC,left
+33,Rightvessel,Rightvessel,right
+34,Leftvessel,Leftvessel,left
+35,OpticChiasm,OpticChiasm,NA
+36,CerebellarVermalLobulesI-V,CerebellarVermalLobulesI-V,NA
+37,CerebellarVermalLobulesVI-VII,CerebellarVermalLobulesVI-VII,NA
+38,CerebellarVermalLobulesVIII-X,CerebellarVermalLobulesVIII-X,NA
+39,LeftBasalForebrain,Leftbasalforebrain,left
+40,RightBasalForebrain,Rightbasalforebrain,right
+41,RightACg,Ganteriorcingulategyrus Right,right
+42,LeftACg,Ganteriorcingulategyrus Left,left
+43,RightAIns,Anteriorinsula Right,right
+44,LeftAIns,Anteriorinsula Left,left
+45,RightAOrG,Anteriororbitalgyrus Right,right
+46,LeftAOrG,Anteriororbitalgyrus Left,left
+47,RightAnG,Angulargyrus Right,right
+48,LeftAnG,Angulargyrus Left,left
+49,RightCalc,Calcarinecortex Right,right
+50,LeftCalc,Calcarinecortex Left,left
+51,RightCO,Centraloperculum Right,right
+52,LeftCO,Centraloperculum Left,left
+53,RightCun,Cuneus Right,right
+54,LeftCun,Cuneus Left,left
+55,RightEntA,Ententorhinalarea Right,right
+56,LeftEntA,Ententorhinalarea Left,left
+57,RightFO,Frontaloperculum Right,right
+58,LeftFO,Frontaloperculum Left,left
+59,RightFRP,Frontalpole Right,right
+60,LeftFRP,Frontalpole Left,left
+61,RightFuG,Fusiformgyrus Right,right
+62,LeftFuG,Fusiformgyrus Left,left
+63,RightGRe,Gyrusrectus Right,right
+64,LeftGRe,Gyrusrectus Left,left
+65,RightIOG,Inferioroccipitalgyrus Right,right
+66,LeftIOG,Inferioroccipitalgyrus Left,left
+67,RightITG,Inferiortemporalgyrus Right,right
+68,LeftITG,Inferiortemporalgyrus Left,left
+69,RightLiG,Lingualgyrus Right,right
+70,LeftLiG,Lingualgyrus Left,left
+71,RightLOrG,Lateralorbitalgyrus Right,right
+72,LeftLOrG,Lateralorbitalgyrus Left,left
+73,RightMCgG,Middlecingulategyrus Right,right
+74,LeftMCgG,Middlecingulategyrus Left,left
+75,RightMFC,Medialfrontalcortex Right,right
+76,LeftMFC,Medialfrontalcortex Left,left
+77,RightMFG,Middlefrontalgyrus Right,right
+78,LeftMFG,Middlefrontalgyrus Left,left
+79,RightMOG,Middleoccipitalgyrus Right,right
+80,LeftMOG,Middleoccipitalgyrus Left,left
+81,RightMOrG,Medialorbitalgyrus Right,right
+82,LeftMOrG,Medialorbitalgyrus Left,left
+83,RightMPoG,Postcentralgyrusmedialsegment Right,right
+84,LeftMPoG,Postcentralgyrusmedialsegment Left,left
+85,RightMPrG,Precentralgyrusmedialsegment Right,right
+86,LeftMPrG,Precentralgyrusmedialsegment Left,left
+87,RightMSFG,Superiorfrontalgyrusmedialsegment Right,right
+88,LeftMSFG,Superiorfrontalgyrusmedialsegment Left,left
+89,RightMTG,Middletemporalgyrus Right,right
+90,LeftMTG,Middletemporalgyrus Left,left
+91,RightOCP,Occipitalpole Right,right
+92,LeftOCP,Occipitalpole Left,left
+93,RightOFuG,Occipitalfusiformgyrus Right,right
+94,LeftOFuG,Occipitalfusiformgyrus Left,left
+95,RightOpIFG,Opercularpartoftheinferiorfrontalgyrus Right,right
+96,LeftOpIFG,Opercularpartoftheinferiorfrontalgyrus Left,left
+97,RightOrIFG,Orbitalpartoftheinferiorfrontalgyrus Right,right
+98,LeftOrIFG,Orbitalpartoftheinferiorfrontalgyrus Left,left
+99,RightPCgG,Posteriorcingulategyrus Right,right
+100,LeftPCgG,Posteriorcingulategyrus Left,left
+101,RightPCu,Precuneus Right,right
+102,LeftPCu,Precuneus Left,left
+103,RightPHG,Parahippocampalgyrus Right,right
+104,LeftPHG,Parahippocampalgyrus Left,left
+105,RightPIns,Posteriorinsula Right,right
+106,LeftPIns,Posteriorinsula Left,left
+107,RightPO,Parietaloperculum Right,right
+108,LeftPO,Parietaloperculum Left,left
+109,RightPoG,Postcentralgyrus Right,right
+110,LeftPoG,Postcentralgyrus Left,left
+111,RightPOrG,Posteriororbitalgyrus Right,right
+112,LeftPOrG,Posteriororbitalgyrus Left,left
+113,RightPP,Planumpolare Right,right
+114,LeftPP,Planumpolare Left,left
+115,RightPrG,Precentralgyrus Right,right
+116,LeftPrG,Precentralgyrus Left,left
+117,RightPT,Planumtemporale Right,right
+118,LeftPT,Planumtemporale Left,left
+119,RightSCA,Subcallosalarea Right,right
+120,LeftSCA,Subcallosalarea Left,left
+121,RightSFG,Superiorfrontalgyrus Right,right
+122,LeftSFG,Superiorfrontalgyrus Left,left
+123,RightSMC,Supplementarymotorcortex Right,right
+124,LeftSMC,Supplementarymotorcortex Left,left
+125,RightSMG,Supramarginalgyrus Right,right
+126,LeftSMG,Supramarginalgyrus Left,left
+127,RightSOG,Superioroccipitalgyrus Right,right
+128,LeftSOG,Superioroccipitalgyrus Left,left
+129,RightSPL,Superiorparietallobule Right,right
+130,LeftSPL,Superiorparietallobule Left,left
+131,RightSTG,Superiortemporalgyrus Right,right
+132,LeftSTG,Superiortemporalgyrus Left,left
+133,RightTMP,Temporalpole Right,right
+134,LeftTMP,Temporalpole Left,left
+135,RightTrIFG,Triangularpartoftheinferiorfrontalgyrus Right,right
+136,LeftTrIFG,Triangularpartoftheinferiorfrontalgyrus Left,left
+137,RightTTG,Transversetemporalgyrus Right,right
+138,LeftTTG,Transversetemporalgyrus Left,left
+139,NA,Not  Used,NA
+140,NA,Not  Used,NA
+141,NA,Not  Used,NA
+142,NA,Not  Used,NA
+143,NA,Not  Used,NA
+144,NA,Not  Used,NA
+145,NA,Not  Used,NA
+146,NA,Not  Used,NA
+147,NA,Not  Used,NA
+148,NA,Not  Used,NA
+149,NA,Not  Used,NA

@@ -1,0 +1,468 @@
+<!DOCTYPE html><html>
+
+<head>
+<meta charset="utf-8">
+<title>README</title>
+<style type="text/css">
+body {
+  font-family: Helvetica, arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background-color: white;
+  padding: 30px; }
+
+body > *:first-child {
+  margin-top: 0 !important; }
+body > *:last-child {
+  margin-bottom: 0 !important; }
+
+a {
+  color: #4183C4; }
+a.absent {
+  color: #cc0000; }
+a.anchor {
+  display: block;
+  padding-left: 30px;
+  margin-left: -30px;
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0; }
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 20px 0 10px;
+  padding: 0;
+  font-weight: bold;
+  -webkit-font-smoothing: antialiased;
+  cursor: text;
+  position: relative; }
+
+h1:hover a.anchor, h2:hover a.anchor, h3:hover a.anchor, h4:hover a.anchor, h5:hover a.anchor, h6:hover a.anchor {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA09pVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoMTMuMCAyMDEyMDMwNS5tLjQxNSAyMDEyLzAzLzA1OjIxOjAwOjAwKSAgKE1hY2ludG9zaCkiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OUM2NjlDQjI4ODBGMTFFMTg1ODlEODNERDJBRjUwQTQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OUM2NjlDQjM4ODBGMTFFMTg1ODlEODNERDJBRjUwQTQiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5QzY2OUNCMDg4MEYxMUUxODU4OUQ4M0REMkFGNTBBNCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5QzY2OUNCMTg4MEYxMUUxODU4OUQ4M0REMkFGNTBBNCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PsQhXeAAAABfSURBVHjaYvz//z8DJYCRUgMYQAbAMBQIAvEqkBQWXI6sHqwHiwG70TTBxGaiWwjCTGgOUgJiF1J8wMRAIUA34B4Q76HUBelAfJYSA0CuMIEaRP8wGIkGMA54bgQIMACAmkXJi0hKJQAAAABJRU5ErkJggg==) no-repeat 10px center;
+  text-decoration: none; }
+
+h1 tt, h1 code {
+  font-size: inherit; }
+
+h2 tt, h2 code {
+  font-size: inherit; }
+
+h3 tt, h3 code {
+  font-size: inherit; }
+
+h4 tt, h4 code {
+  font-size: inherit; }
+
+h5 tt, h5 code {
+  font-size: inherit; }
+
+h6 tt, h6 code {
+  font-size: inherit; }
+
+h1 {
+  font-size: 28px;
+  color: black; }
+
+h2 {
+  font-size: 24px;
+  border-bottom: 1px solid #cccccc;
+  color: black; }
+
+h3 {
+  font-size: 18px; }
+
+h4 {
+  font-size: 16px; }
+
+h5 {
+  font-size: 14px; }
+
+h6 {
+  color: #777777;
+  font-size: 14px; }
+
+p, blockquote, ul, ol, dl, li, table, pre {
+  margin: 15px 0; }
+
+hr {
+  background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAECAYAAACtBE5DAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OENDRjNBN0E2NTZBMTFFMEI3QjRBODM4NzJDMjlGNDgiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OENDRjNBN0I2NTZBMTFFMEI3QjRBODM4NzJDMjlGNDgiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo4Q0NGM0E3ODY1NkExMUUwQjdCNEE4Mzg3MkMyOUY0OCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo4Q0NGM0E3OTY1NkExMUUwQjdCNEE4Mzg3MkMyOUY0OCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PqqezsUAAAAfSURBVHjaYmRABcYwBiM2QSA4y4hNEKYDQxAEAAIMAHNGAzhkPOlYAAAAAElFTkSuQmCC) repeat-x 0 0;
+  border: 0 none;
+  color: #cccccc;
+  height: 4px;
+  padding: 0;
+}
+
+body > h2:first-child {
+  margin-top: 0;
+  padding-top: 0; }
+body > h1:first-child {
+  margin-top: 0;
+  padding-top: 0; }
+  body > h1:first-child + h2 {
+    margin-top: 0;
+    padding-top: 0; }
+body > h3:first-child, body > h4:first-child, body > h5:first-child, body > h6:first-child {
+  margin-top: 0;
+  padding-top: 0; }
+
+a:first-child h1, a:first-child h2, a:first-child h3, a:first-child h4, a:first-child h5, a:first-child h6 {
+  margin-top: 0;
+  padding-top: 0; }
+
+h1 p, h2 p, h3 p, h4 p, h5 p, h6 p {
+  margin-top: 0; }
+
+li p.first {
+  display: inline-block; }
+li {
+  margin: 0; }
+ul, ol {
+  padding-left: 30px; }
+
+ul :first-child, ol :first-child {
+  margin-top: 0; }
+
+dl {
+  padding: 0; }
+  dl dt {
+    font-size: 14px;
+    font-weight: bold;
+    font-style: italic;
+    padding: 0;
+    margin: 15px 0 5px; }
+    dl dt:first-child {
+      padding: 0; }
+    dl dt > :first-child {
+      margin-top: 0; }
+    dl dt > :last-child {
+      margin-bottom: 0; }
+  dl dd {
+    margin: 0 0 15px;
+    padding: 0 15px; }
+    dl dd > :first-child {
+      margin-top: 0; }
+    dl dd > :last-child {
+      margin-bottom: 0; }
+
+blockquote {
+  border-left: 4px solid #dddddd;
+  padding: 0 15px;
+  color: #777777; }
+  blockquote > :first-child {
+    margin-top: 0; }
+  blockquote > :last-child {
+    margin-bottom: 0; }
+
+table {
+  padding: 0;border-collapse: collapse; }
+  table tr {
+    border-top: 1px solid #cccccc;
+    background-color: white;
+    margin: 0;
+    padding: 0; }
+    table tr:nth-child(2n) {
+      background-color: #f8f8f8; }
+    table tr th {
+      font-weight: bold;
+      border: 1px solid #cccccc;
+      margin: 0;
+      padding: 6px 13px; }
+    table tr td {
+      border: 1px solid #cccccc;
+      margin: 0;
+      padding: 6px 13px; }
+    table tr th :first-child, table tr td :first-child {
+      margin-top: 0; }
+    table tr th :last-child, table tr td :last-child {
+      margin-bottom: 0; }
+
+img {
+  max-width: 100%; }
+
+span.frame {
+  display: block;
+  overflow: hidden; }
+  span.frame > span {
+    border: 1px solid #dddddd;
+    display: block;
+    float: left;
+    overflow: hidden;
+    margin: 13px 0 0;
+    padding: 7px;
+    width: auto; }
+  span.frame span img {
+    display: block;
+    float: left; }
+  span.frame span span {
+    clear: both;
+    color: #333333;
+    display: block;
+    padding: 5px 0 0; }
+span.align-center {
+  display: block;
+  overflow: hidden;
+  clear: both; }
+  span.align-center > span {
+    display: block;
+    overflow: hidden;
+    margin: 13px auto 0;
+    text-align: center; }
+  span.align-center span img {
+    margin: 0 auto;
+    text-align: center; }
+span.align-right {
+  display: block;
+  overflow: hidden;
+  clear: both; }
+  span.align-right > span {
+    display: block;
+    overflow: hidden;
+    margin: 13px 0 0;
+    text-align: right; }
+  span.align-right span img {
+    margin: 0;
+    text-align: right; }
+span.float-left {
+  display: block;
+  margin-right: 13px;
+  overflow: hidden;
+  float: left; }
+  span.float-left span {
+    margin: 13px 0 0; }
+span.float-right {
+  display: block;
+  margin-left: 13px;
+  overflow: hidden;
+  float: right; }
+  span.float-right > span {
+    display: block;
+    overflow: hidden;
+    margin: 13px auto 0;
+    text-align: right; }
+
+code, tt {
+  margin: 0 2px;
+  padding: 0 5px;
+  white-space: nowrap;
+  border: 1px solid #eaeaea;
+  background-color: #f8f8f8;
+  border-radius: 3px; }
+
+pre code {
+  margin: 0;
+  padding: 0;
+  white-space: pre;
+  border: none;
+  background: transparent; }
+
+.highlight pre {
+  background-color: #f8f8f8;
+  border: 1px solid #cccccc;
+  font-size: 13px;
+  line-height: 19px;
+  overflow: auto;
+  padding: 6px 10px;
+  border-radius: 3px; }
+
+pre {
+  background-color: #f8f8f8;
+  border: 1px solid #cccccc;
+  font-size: 13px;
+  line-height: 19px;
+  overflow: auto;
+  padding: 6px 10px;
+  border-radius: 3px; }
+  pre code, pre tt {
+    background-color: transparent;
+    border: none; }
+
+sup {
+    font-size: 0.83em;
+    vertical-align: super;
+    line-height: 0;
+}
+* {
+	-webkit-print-color-adjust: exact;
+}
+@media screen and (min-width: 914px) {
+    body {
+        width: 854px;
+        margin:0 auto;
+    }
+}
+@media print {
+	table, pre {
+		page-break-inside: avoid;
+	}
+	pre {
+		word-wrap: break-word;
+	}
+}
+</style>
+</head>
+<body>
+<h1 id="toc_0">Introduction</h1>
+
+<p>The MALPEM distribution package consists of software and data files needed to perform a robust bias correction, brain extraction, and brain segmentation of a magnetic resonance brain image into 138 cortical and subcortical structures.</p>
+
+<p>It was developed by <a href="http://www.doc.ic.ac.uk/%7Ecl6311">Christian Ledig</a> in the <a href="http://biomedic.doc.ic.ac.uk">BioMedIA</a> group at
+Imperial College London, UK.</p>
+
+<p><em>Acknowledgement</em>: Thanks to all co-authors mentioned below who contributed to the development of the employed methodology. Special thanks to <a href="http://andreasschuh.com">Andreas Schuh</a> for implementing the image registration and giving valuable advice on the distribution of this software package.</p>
+
+<p>If you use any part of this software for your brain image analysis,
+please cite the following papers:</p>
+
+<p><strong>Framework and segmentation</strong></p>
+
+<p>C. Ledig, R. A. Heckemann, A. Hammers, J. C. Lopez, V. F. J. Newcombe, A. Makropoulos, 
+   J. Loetjoenen, D. Menon and D. Rueckert,
+   &quot;Robust whole-brain segmentation: Application to traumatic brain injury&quot;,
+   Medical Image Analysis, 21(1), pp. 40-58, 2015.</p>
+
+<p><strong>Brain extraction</strong></p>
+
+<p>R. Heckemann, C. Ledig, K. R. Gray, P. Aljabar, D. Rueckert, J. V. Hajnal, and A. Hammers,
+   &quot;Brain extraction using label propagation and group agreement: pincram&quot;,
+   PLoS ONE, 10(7), pp. e0129211, 2015.</p>
+
+<h1 id="toc_1">Installation</h1>
+
+<p>The MALPEM software was developed on a 64-bit Linux system (Ubuntu 14.04) and is at the
+moment only available as binary distribution which was packaged using <a href="http://reproducible.io">CARE</a>.
+This enables the execution of the software on any Linux system within a <a href="http://proot.me">confined execution
+environment</a> identical to our development environment. Advantages are that the
+programs run on any Linux system and cannot interfere with other files on your system.</p>
+
+<p>In the future, the source code of all software components will be released which will
+enable the build and native installation on any supported operating system, including
+in particular also Windows and OS X.</p>
+
+<h2 id="toc_2">Installation on Linux</h2>
+
+<p>The online installer is <a href="http://www.doc.ic.ac.uk/%7Ecl6311/Material/MALPEM/malpem_installer.tar">available here</a>. The installer downloads
+and extracts all required resources and executable files in the installation directory
+of MALPEM. Note that in the current version, all of the available resources are required
+for a successful brain segmentation workflow execution.</p>
+
+<p>To install MALPEM with all its resources in your home directory,
+run the following commands in a <a href="https://help.ubuntu.com/community/UsingTheTerminal">Terminal</a> window:</p>
+
+<pre><code class="language-none">cd
+wget -O malpem_installer.tar http://www.doc.ic.ac.uk/~cl6311/Material/MALPEM/malpem_installer.tar
+tar xf malpem_installer.tar
+./malpem_installer/malpem-install</code></pre>
+
+<p>The installer will list for each additional resource the license terms under which this
+resource is made available and whether you accept these terms to proceed with the download
+and installation. This will install all required programs and data files in a directory specified by the user (e.g., <code>~/malpem-1.2</code>).</p>
+
+<p><strong>Note</strong>: For a system wide installation, you might want to install MALPEM to e.g. <code>/opt/malpem-1.2</code> as a root user. To do this run <code>sudo ./malpem_installer/malpem-install</code>. Please note that while all files can be owned by root the directory <code>lib/care/rootfs/tmp</code> needs to  be read/writable by the user running MALPEM.</p>
+
+<p><strong>Tip</strong>: The MALPEM package can be relocated by simply moving the complete installation folder.</p>
+
+<h2 id="toc_3">Installation on Windows and OS X</h2>
+
+<p>For non-Linux operating systems, a <a href="https://www.virtualbox.org">virtual machine</a> (VM) running <a href="http://www.ubuntu.com/download/desktop">Ubuntu</a> 14.04
+or a later version is recommended. A good tutorial for how to setup a VM on Mac OS can be found <a href="http://www.simplehelp.net/2015/06/09/how-to-install-ubuntu-on-your-mac/">here</a>.</p>
+
+<p><strong>Important:</strong> Make sure that the VM has enough memory (e.g. 8 GB) and disk space (e.g. 16 GB) allocated to run MALPEM.</p>
+
+<p>A virtual Linux machine will not be required for future open source releases of the software.
+Make sure to check the MALPEM download page regularly for new releases.</p>
+
+<h1 id="toc_4">Workflow execution</h1>
+
+<p>To execute the brain segmentation workflow for a given brain MR image (e.g., <code>input.nii.gz</code>),
+including the bias correction and brain extraction steps, run the following command in a
+<a href="https://help.ubuntu.com/community/UsingTheTerminal">Terminal</a> window after changing to the MALPEM installation directory:</p>
+
+<pre><code class="language-none">cd ~/malpem-1.2
+bin/malpem-proot -i input.nii.gz -o outputDir</code></pre>
+
+<p><strong>Note:</strong> We currently only support the <a href="http://nifti.nimh.nih.gov">NIfTI</a> image file format.</p>
+
+<p>A help screen with all the available workflow options can be displayed using the following
+command:</p>
+
+<pre><code class="language-none">bin/malpem-proot -h</code></pre>
+
+<p><strong>Tip:</strong> By adding the directory of your MALPEM installation (e.g. <code>$HOME/malpem-1.2/bin/</code> or <code>/opt/malpem-1.2/bin/</code>)
+to your <a href="http://www.cyberciti.biz/faq/unix-linux-adding-path/">PATH</a> environment variable, the segmentation can be executed from any
+directory by simply typing the command <code>malpem-proot</code>.</p>
+
+<h2 id="toc_5">System requirements</h2>
+
+<p><strong>OS and CPU</strong></p>
+
+<ul>
+<li>Using CARE and a (virtual) Linux system, MALPEM can be run on any 64-bit machine.</li>
+</ul>
+
+<p><strong>Disk space</strong></p>
+
+<ul>
+<li>At least 10 GB of free disk space are recommended for the installation and execution of MALPEM.</li>
+<li>The MALPEM package including all brain atlases occupies approximately 1.5 GB of disk space.</li>
+<li>The size of the output directory depends on the resolution of the input image. 
+For an image of size 256x256x150 voxels, approximately 500 MB including the transformations
+for the atlas propagation are required (see -c option to clean up unnecessary files after MALPEM has finished).</li>
+<li>During the execution, MALPEM creates several temporary files especially for the brain extraction.
+These temporary files can exceed 5 GB, but will be removed after the workflow execution.</li>
+</ul>
+
+<p><strong>Memory</strong></p>
+
+<ul>
+<li>It is suggested to have at least 8 GB of memory available (allocated to the virtual machine).</li>
+<li>The memory requirements depend on the resolution of the input image and might exceed 8 GB.</li>
+</ul>
+
+<h2 id="toc_6">Runtime</h2>
+
+<p>The processing of an image (256x256x150) takes around 1-2 hours using 8 cores of a standard
+desktop machine (see -t option). If MALPEM is run on a single core this increases to 
+around 10 hours.</p>
+
+<h2 id="toc_7">The proot environment</h2>
+
+<p>The execution of MALPEM within a confined <a href="http://proot.me">proot</a> environment (cf. Installation),
+requires the use of a wrapper script (<code>bin/malpem-proot</code>) which manages the input and
+output files of the workflow. This is because the programs executed within this environment
+can only access files stored underneath the <code>lib/care/rootfs</code> directory. The installer
+script creates hard links inside the <code>lib/care/rootfs</code> directory tree to required
+resources of the MALPEM installation as the final installation step. This makes the
+installed resources available to the programs executed within this environment.
+Other, user supplied, input files as well as the output files of the workflow are copied
+by the MALPEM wrapper script to and from this environment to make this process transparent
+to the caller.</p>
+
+<h1 id="toc_8">Example execution</h1>
+
+<p>To test whether MALPEM is setup correctly run</p>
+
+<pre><code class="language-none">bin/malpem-proot -i atlas/pincram/limages/full/m100.nii.gz -o outputDir -t 8</code></pre>
+
+<p>This test should finish in approximately 10 hours when executed on a single core or about 1-2 hours
+on a multi-core system with 8 threads (-t 8). The output directory will contain a binary brain mask for the
+test image as well as a whole brain segmentation of 138 structures.
+The volumes of the segmented structures are summarized in a PDF report file named <code>m100_Report.pdf</code>. This report can be
+compared to <a href="http://www.doc.ic.ac.uk/%7Ecl6311/Material/MALPEM/m100_Report.pdf">this online available example report</a> to ensure that the obtained results are
+similar to our results and that the framework is installed correctly.
+Please note that minor numerical differences are expected, but the volume measures should be quite similar. 
+If you suspect a problem with the installation or workflow execution, please contact <a href="http://www.doc.ic.ac.uk/%7Ecl6311/contact.html">Christian Ledig</a>.</p>
+
+<p><strong>Explanation of parameters:</strong></p>
+
+<pre><code class="language-none">-i atlas/pincram/limages/full/m100.nii.gz   segment one of the PINCRAM atlas images
+-o outputDir                                output the results to outputDir (this will be created)
+-t 8                                        parallelize using 8 threads (if your machine has less
+                                            or more CPU cores you might want to change this).</code></pre>
+
+
+</body>
+
+</html>

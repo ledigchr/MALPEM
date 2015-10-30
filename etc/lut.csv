@@ -1,0 +1,139 @@
+irtkSegmentTable: 138   
+1 255 0 0 1 1 3rd Ventricle
+2 0 255 0 1 1 4th Ventricle
+3 255 255 0 1 1 Right Accumbens Area
+4 0 0 255 1 1 Left Accumbens Area
+5 255 255 255 1 1 Right Amygdala
+6 255 255 255 1 1 Left Amygdala
+7 255 0 0 1 1 Brain Stem
+8 255 255 255 1 1 Right Caudate
+9 7 255 7 1 1 Left Caudate
+10 255 255 7 1 1 Right Cerebellum Exterior
+11 7 7 255 1 1 Left Cerebellum Exterior
+12 255 7 255 1 1 Right Cerebellum White Matter
+13 7 255 255 1 1 Left Cerebellum White Matter
+14 248 248 248 1 1 Right Cerebral Exterior
+15 255 14 14 1 1 Left Cerebral Exterior
+16 14 255 14 1 1 Right Cerebral White Matter
+17 255 255 14 1 1 Left Cerebral White Matter
+18 14 14 255 1 1 CSF
+19 255 14 255 1 1 Right Hippocampus
+20 14 255 255 1 1 Left Hippocampus
+21 241 241 241 1 1 Right Inf Lat Vent
+22 255 21 21 1 1 Left Inf Lat Vent
+23 21 255 21 1 1 Right Lateral Ventricle
+24 255 255 21 1 1 Left Lateral Ventricle
+25 21 21 255 1 1 Right Pallidum
+26 255 21 255 1 1 Left Pallidum
+27 21 255 255 1 1 Right Putamen
+28 234 234 234 1 1 Left Putamen
+29 255 28 28 1 1 Right Thalamus Proper
+30 28 255 28 1 1 Left Thalamus Proper
+31 255 255 28 1 1 Right Ventral DC
+32 28 28 255 1 1 Left Ventral DC
+33 255 28 255 1 1 Right vessel
+34 28 255 255 1 1 Left vessel
+35 227 227 227 1 1 Optic Chiasm
+36 255 35 35 1 1 Cerebellar Vermal Lobules I-V
+37 35 255 35 1 1 Cerebellar Vermal Lobules VI-VII
+38 255 255 35 1 1 Cerebellar Vermal Lobules VIII-X
+39 35 35 255 1 1 Left Basal Forebrain
+40 255 35 255 1 1 Right Basal Forebrain
+41 35 255 255 1 1 Right ACgG anterior cingulate gyrus
+42 220 220 220 1 1 Left ACgG anterior cingulate gyrus
+43 255 42 42 1 1 Right AIns anterior insula
+44 42 255 42 1 1 Left AIns anterior insula
+45 255 255 42 1 1 Right AOrG anterior orbital gyrus
+46 42 42 255 1 1 Left AOrG anterior orbital gyrus
+47 255 42 255 1 1 Right AnG angular gyrus
+48 42 255 255 1 1 Left AnG angular gyrus
+49 213 213 213 1 1 Right Calc calcarine cortex
+50 255 49 49 1 1 Left Calc calcarine cortex
+51 49 255 49 1 1 Right CO central operculum
+52 255 255 49 1 1 Left CO central operculum
+53 49 49 255 1 1 Right Cun cuneus
+54 255 49 255 1 1 Left Cun cuneus
+55 49 255 255 1 1 Right Ent entorhinal area
+56 206 206 206 1 1 Left Ent entorhinal area
+57 255 56 56 1 1 Right FO frontal operculum
+58 56 255 56 1 1 Left FO frontal operculum
+59 255 255 56 1 1 Right FRP frontal pole
+60 56 56 255 1 1 Left FRP frontal pole
+61 255 56 255 1 1 Right FuG fusiform gyrus
+62 56 255 255 1 1 Left FuG fusiform gyrus
+63 199 199 199 1 1 Right GRe gyrus rectus
+64 255 63 63 1 1 Left GRe gyrus rectus
+65 63 255 63 1 1 Right IOG inferior occipital gyrus
+66 255 255 63 1 1 Left IOG inferior occipital gyrus
+67 63 63 255 1 1 Right ITG inferior temporal gyrus
+68 0 0 255 1 1 Left ITG inferior temporal gyrus
+69 255 0 0 1 1 Right LiG lingual gyrus
+70 192 0 0 1 1 Left LiG lingual gyrus
+71 255 255 255 1 1 Right LOrG lateral orbital gyrus
+72 70 255 70 1 1 Left LOrG lateral orbital gyrus
+73 255 255 70 1 1 Right MCgG middle cingulate gyrus
+74 70 70 255 1 1 Left MCgG middle cingulate gyrus
+75 255 70 255 1 1 Right MFC medial frontal cortex
+76 70 255 255 1 1 Left MFC medial frontal cortex
+77 171 0 255 1 1 Right MFG middle frontal gyrus
+78 255 77 255 1 1 Left MFG middle frontal gyrus
+79 255 128 0 1 1 Right MOG middle occipital gyrus
+80 255 77 77 1 1 Left MOG middle occipital gyrus
+81 77 205 255 1 1 Right MOrG medial orbital gyrus
+82 255 128 255 1 1 Left MOrG medial orbital gyrus
+83 77 154 255 1 1 Right MPoG postcentral gyrus medial segment
+84 255 0 0 1 1 Left MPoG postcentral gyrus medial segment
+85 255 255 0 1 1 Right MPrG precentral gyrus medial segment
+86 255 0 0 1 1 Left MPrG precentral gyrus medial segment
+87 0 255 0 1 1 Right MSFG superior frontal gyrus medial segment
+88 255 255 0 1 1 Left MSFG superior frontal gyrus medial segment
+89 0 0 255 1 1 Right MTG middle temporal gyrus
+90 255 255 255 1 1 Left MTG middle temporal gyrus
+91 255 255 255 1 1 Right OCP occipital pole
+92 255 0 0 1 1 Left OCP occipital pole
+93 255 255 255 1 1 Right OFuG occipital fusiform gyrus
+94 7 255 7 1 1 Left OFuG occipital fusiform gyrus
+95 255 255 7 1 1 Right OpIFG opercular part of the inferior frontal gyrus
+96 7 7 255 1 1 Left OpIFG opercular part of the inferior frontal gyrus
+97 255 7 255 1 1 Right OrIFG orbital part of the inferior frontal gyrus
+98 7 255 255 1 1 Left OrIFG orbital part of the inferior frontal gyrus
+99 248 248 248 1 1 Right PCgG posterior cingulate gyrus
+100 255 14 14 1 1 Left PCgG posterior cingulate gyrus
+101 14 255 14 1 1 Right PCu precuneus
+102 255 255 14 1 1 Left PCu precuneus
+103 14 14 255 1 1 Right PHG parahippocampal gyrus
+104 255 14 255 1 1 Left PHG parahippocampal gyrus
+105 14 255 255 1 1 Right PIns posterior insula
+106 241 241 241 1 1 Left PIns posterior insula
+107 255 21 21 1 1 Right PO parietal operculum
+108 21 255 21 1 1 Left PO parietal operculum
+109 255 255 21 1 1 Right PoG postcentral gyrus
+110 21 21 255 1 1 Left PoG postcentral gyrus
+111 255 21 255 1 1 Right POrG posterior orbital gyrus
+112 21 255 255 1 1 Left POrG posterior orbital gyrus
+113 234 234 234 1 1 Right PP planum polare
+114 255 28 28 1 1 Left PP planum polare
+115 28 255 28 1 1 Right PrG precentral gyrus
+116 255 255 28 1 1 Left PrG precentral gyrus
+117 28 28 255 1 1 Right PT planum temporale
+118 255 28 255 1 1 Left PT planum temporale
+119 28 255 255 1 1 Right SCA subcallosal area
+120 227 227 227 1 1 Left SCA subcallosal area
+121 255 35 35 1 1 Right SFG superior frontal gyrus
+122 35 255 35 1 1 Left SFG superior frontal gyrus
+123 255 255 35 1 1 Right SMC supplementary motor cortex
+124 35 35 255 1 1 Left SMC supplementary motor cortex
+125 255 35 255 1 1 Right SMG supramarginal gyrus
+126 35 255 255 1 1 Left SMG supramarginal gyrus
+127 220 220 220 1 1 Right SOG superior occipital gyrus
+128 255 42 42 1 1 Left SOG superior occipital gyrus
+129 42 255 42 1 1 Right SPL superior parietal lobule
+130 255 255 42 1 1 Left SPL superior parietal lobule
+131 42 42 255 1 1 Right STG superior temporal gyrus
+132 255 42 255 1 1 Left STG superior temporal gyrus
+133 42 255 255 1 1 Right TMP temporal pole
+134 213 213 213 1 1 Left TMP temporal pole
+135 255 49 49 1 1 Right TrIFG triangular part of the inferior frontal gyrus
+136 49 255 49 1 1 Left TrIFG triangular part of the inferior frontal gyrus
+137 255 255 49 1 1 Right TTG transverse temporal gyrus
+138 49 49 255 1 1 Left TTG transverse temporal gyrus

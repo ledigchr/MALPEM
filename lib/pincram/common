@@ -1,0 +1,16 @@
+#!/bin/bash
+
+msg () {
+    for msgline
+    do echo "$pn: $msgline" >&2
+    done
+}
+
+fatal () { msg "$@"; exit 1; }
+
+normalpath () {
+    dir=$(dirname "$1")
+    bas=$(basename "$1")
+    echo $(cd $dir && pwd)/$bas
+}
+
