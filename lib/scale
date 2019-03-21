@@ -8,6 +8,7 @@ HOMEDIR_ms=$3;
 
 curdir=`dirname $0`
 PATH=$PATH:${curdir}/../
+PATH=${curdir}/irtk:${curdir}/niftyseg:$PATH
 
 mkdir $HOMEDIR_ms/tmp/
 

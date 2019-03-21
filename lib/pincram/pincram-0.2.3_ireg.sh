@@ -10,7 +10,7 @@ commandline="$pn $*"
 
 # Check that binaries are available
 curdir=`dirname $0`
-export PATH=${curdir}/../:$PATH
+export PATH=${curdir}/../:${curdir}/../irtk:${curdir}/../niftyseg:$PATH
 export LD_LIBRARY_PATH=${curdir}/../../lib/:$LD_LIBRARY_PATH
 
 which ireg >/dev/null || fatal "IRTK ireg binary not found -- please ensure IRTK is on \$PATH"
