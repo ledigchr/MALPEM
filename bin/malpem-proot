@@ -68,7 +68,7 @@ if [[ $inputOK -eq 1 ]]; then
 	ensureDir $caretmp
 	careinput=$caretmp/input/
 	careoutput=$caretmp/output/
-	tmpname=`tempfile`
+	tmpname=`mktemp`
 	tmpname=`basename $tmpname`
 	tmpinput=$careinput/$tmpname
 	tmpoutput=$careoutput/$tmpname
