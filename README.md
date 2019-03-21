@@ -24,7 +24,7 @@ please cite the following papers:
    "Brain extraction using label propagation and group agreement: pincram",
    PLoS ONE, 10(7), pp. e0129211, 2015.
 
-[homepage]: http://www.doc.ic.ac.uk/~cl6311
+[homepage]: http://www.christianledig.com
 [biomedia]: http://biomedic.doc.ic.ac.uk
 [schuschu]: http://andreasschuh.com
 
@@ -58,7 +58,7 @@ To install MALPEM with all its resources in your home directory,
 run the following commands in a [Terminal][terminal] window:
 
     cd
-    wget -O malpem_installer.tar http://www.doc.ic.ac.uk/~cl6311/Material/MALPEM/malpem_installer.tar
+    wget -O malpem_installer.tar http://www.christianledig.com/Material/MALPEM/malpem_installer.tar
     tar xf malpem_installer.tar
     ./malpem_installer/malpem-install
 
@@ -71,7 +71,7 @@ and installation. This will install all required programs and data files in a di
 **Tip**: The MALPEM package can be relocated by simply moving the complete installation folder.
 
 [terminal]: https://help.ubuntu.com/community/UsingTheTerminal
-[download]: http://www.doc.ic.ac.uk/~cl6311/Material/MALPEM/malpem_installer.tar
+[download]: http://www.christianledig.com/Material/MALPEM/malpem_installer.tar
 
 
 Installation on Windows and OS X
@@ -178,8 +178,8 @@ similar to our results and that the framework is installed correctly.
 Please note that minor numerical differences are expected, but the volume measures should be quite similar. 
 If you suspect a problem with the installation or workflow execution, please contact [Christian Ledig][contact].
 
-[report]: http://www.doc.ic.ac.uk/~cl6311/Material/MALPEM/m100_Report.pdf
-[contact]: http://www.doc.ic.ac.uk/~cl6311/contact.html
+[report]: http://www.christianledig.com/Material/MALPEM/m100_Report.pdf
+[contact]: http://www.christianledig.com/contact.html
 
 **Explanation of parameters:**
 

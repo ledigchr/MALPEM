@@ -37,7 +37,7 @@ import platform
 
 # MALPEM version and source URL
 version = "1.2"
-base_url = "http://www.doc.ic.ac.uk/~cl6311/Material/MALPEM/"
+base_url = "http://www.christianledig.com/Material/MALPEM/"
 
 
 # Determine default installation path
