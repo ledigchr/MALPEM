@@ -26,25 +26,25 @@ def N4(input_file, output_file, field_strength, input_mask, output_dir):
     if input_mask == "":
         if field_strength == '1.5T':
             parameters_N4 = " -d 3 -i " + input_file + " -o " + output_file + " -s 2 -c [50x40x30x20,0.0000001] " \
-                                                                              "-b [200,3,0.0,0.5] -t [0.15,0.01,200] 2"
+                                                                              "-b [200,3,0.0,0.5] -t [0.15,0.01,200]"
         elif field_strength == '3T':
             parameters_N4 = " -d 3 -i " + input_file + " -o " + output_file + " -s 2 -c [50x40x30x20,0.0000001] " \
-                                                                              "-b [75,3,0.0,0.5] -t [0.15,0.01,200] 2"
+                                                                              "-b [75,3,0.0,0.5] -t [0.15,0.01,200]"
         else:
             print "Warning N4: Unknown field strength defaulting to 1.5T parameters"
             parameters_N4 = " -d 3 -i " + input_file + " -o " + output_file + " -s 2 -c [50x40x30x20,0.0000001] " \
-                                                                              "-b [200,3,0.0,0.5] -t [0.15,0.01,200] 2"
+                                                                              "-b [200,3,0.0,0.5] -t [0.15,0.01,200]"
     else:
         if field_strength == '1.5T':
             parameters_N4 = " -d 3 -i " + input_file + " -x " + input_mask + " -o " + output_file + " -s 2 " \
-                            "-c [50x40x30x20,0.0000001] -b [200,3,0.0,0.5] -t [0.15,0.01,200] 2"
+                            "-c [50x40x30x20,0.0000001] -b [200,3,0.0,0.5] -t [0.15,0.01,200]"
         elif field_strength == '3T':
             parameters_N4 = " -d 3 -i " + input_file + " -x " + input_mask + " -o " + output_file + " -s 2 " \
-                            "-c [50x40x30x20,0.0000001] -b [75,3,0.0,0.5] -t [0.15,0.01,200] 2"
+                            "-c [50x40x30x20,0.0000001] -b [75,3,0.0,0.5] -t [0.15,0.01,200]"
         else:
             print "Warning N4: Unknown field strength defaulting to 3T parameters"
             parameters_N4 = " -d 3 -i " + input_file + " -x " + input_mask + " -o " + output_file + " -s 2 " \
-                            "-c [50x40x30x20,0.0000001] -b [75,3,0.0,0.5] -t [0.15,0.01,200] 2"
+                            "-c [50x40x30x20,0.0000001] -b [75,3,0.0,0.5] -t [0.15,0.01,200]"
 
     malpem.mytools.execute_cmd(binary_N4, parameters_N4, logfile)
     malpem.mytools.ensure_file(output_file, "")
