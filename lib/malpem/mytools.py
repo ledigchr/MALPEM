@@ -43,7 +43,7 @@ def ensure_file(filename, message):
 
 def execute_cmd(cmd, parameters, logfile):
     if logfile == "":
-        final_cmd = final_cmd = cmd + " " + parameters
+        final_cmd = cmd + " " + parameters
     else:
         final_cmd = cmd + " " + parameters + " >> " + logfile + " 2>&1"
         f = open(logfile, 'w')
