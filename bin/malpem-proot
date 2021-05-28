@@ -1,5 +1,7 @@
 #! /bin/bash
 
+export PROOT_NO_SECCOMP=1
+
 function ensureDir {
         if [ ! -d $1 ]; then
                 mkdir $1;
