@@ -74,8 +74,8 @@ def binarise(input_file, output_file):
     task_name = "binarising image for brain mask"
     start_time = malpem.mytools.start_task(task_name)
 
-    parameters_biarise = input_file + " -bin " + output_file
-    malpem.mytools.execute_cmd(binary_fsl, parameters_biarise, "")
+    parameters_binarise = input_file + " -bin " + output_file
+    malpem.mytools.execute_cmd(binary_fsl, parameters_binarise, "")
     malpem.mytools.ensure_file(output_file, "")
 
     malpem.mytools.finished_task(start_time, task_name)
