@@ -195,6 +195,7 @@ $PROOT_NO_SECCOMP \
 'TEXTDOMAINDIR=/usr/share/locale/'  \
 'COLORTERM=gnome-terminal'  \
 'XAUTHORITY=/tmp/.mdmCHXAXX'  \
+'ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=8' \
 "${PROOT}" \
 -b "/dev"  \
 -b "/proc"  \
