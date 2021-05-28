@@ -301,10 +301,7 @@ def main(argv):
 
     # Run N4 Bias Correction (ITK implementation, parameters depend on 1.5T/3T)
     if not os.path.isfile(image_n4):
-        if not os.path.isfile(image_mask):
-            malpem.bias_correction.N4(input_file, image_n4, field_strength, "", output_dir)
-        else:
-            malpem.bias_correction.N4(input_file, image_n4, field_strength, image_mask, output_dir)
+        malpem.bias_correction.N4(input_file, image_n4, field_strength, "", output_dir)
     else:
         print "Skipping bias correction: file exists / specified by user"
 
@@ -319,10 +316,17 @@ def main(argv):
     if not os.path.isfile(image_n4_masked):
         if not os.path.isfile(image_mask):
             malpem.brain_extraction.pincram(image_n4, image_mask, threads, output_dir)
-            # Note that the MNI transformation above was calculated with the originally N4 corrected image
-            if do_n4_pincram:
-                print "Running a second bias correction with the calculated brain mask"
-                malpem.bias_correction.N4(image_n4, image_n4, field_strength, image_mask, output_dir)
+
+        print "Transforming image/mask to ensure numerically matching headers (workaround)"
+        # Nearest neighbor interpolation since this is merely about numerical adjustment of the header
+        # and should have no effect on any pixel values
+        malpem.registration.transform(image_n4, image_mask, image_mask, "", "nn", output_dir)
+        malpem.registration.transform(image_n4, image_n4, image_n4, "", "nn", output_dir)
+
+        # Note that the MNI transformation above was calculated with the originally N4 corrected image
+        if do_n4_pincram:
+            print "Running a second bias correction with the calculated brain mask"
+            malpem.bias_correction.N4(image_n4, image_n4, field_strength, image_mask, output_dir)
 
         malpem.brain_extraction.apply_mask(image_n4, image_n4_masked, image_mask)
     else:
