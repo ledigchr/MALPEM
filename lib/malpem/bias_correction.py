@@ -4,8 +4,6 @@
 #
 #         see license file in project root directory
 
-import time
-from subprocess import call
 import os.path
 import malpem.mytools
 
@@ -51,3 +49,17 @@ def N4(input_file, output_file, field_strength, input_mask, output_dir):
 
     malpem.mytools.finished_task(start_time, task_name)
     return True
+
+
+def get_full_image_mask(input_file, output_file):
+# DEFINITIONS
+    binary_fsl = os.path.join(malpem.mytools.__malpem_path__, "lib", "niftyseg", "seg_maths")
+# END
+    task_name = "getting mask for full image"
+    start_time = malpem.mytools.start_task(task_name)
+
+    parameters_binarise = input_file + " -bin -add 1 -bin " + output_file
+    malpem.mytools.execute_cmd(binary_fsl, parameters_binarise, "")
+    malpem.mytools.ensure_file(output_file, "")
+
+    malpem.mytools.finished_task(start_time, task_name)
