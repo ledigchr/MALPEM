@@ -1,4 +1,4 @@
-### Update:###
+### Update:
 * 5/30/2021: Release of <b>malpem-1.3</b>: Improved robustness, reproducibility, minor bug fixes. See [releases][releases].
 
 [releases]: https://github.com/ledigchr/MALPEM/releases
