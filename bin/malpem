@@ -213,6 +213,7 @@ def main(argv):
     malpem.mytools.check_ex_dir(tmp_dir)
 
     image_n4 = os.path.join(output_dir, base_file + "_N4.nii.gz")
+    image_n4_initial = os.path.join(tmp_dir, base_file + "_N4_initial.nii.gz")
     image_n4_masked = os.path.join(output_dir, base_file + "_N4_masked.nii.gz")
     image_full_mask = os.path.join(output_dir, base_file + "_mask_full_image.nii.gz")
 
@@ -330,7 +331,9 @@ def main(argv):
         # Note that the MNI transformation above was calculated with the originally N4 corrected image
         if do_n4_pincram:
             print "Running a second bias correction with the calculated brain mask"
-            malpem.bias_correction.N4(image_n4, image_n4, field_strength, image_mask, output_dir)
+            # Move file to make sure file doesn't exist if this N4 fails and MALPEM doesn't continue silently
+            shutil.move(image_n4, image_n4_initial)
+            malpem.bias_correction.N4(image_n4_initial, image_n4, field_strength, image_mask, output_dir)
 
         malpem.brain_extraction.apply_mask(image_n4, image_n4_masked, image_mask)
     else:
