@@ -434,11 +434,11 @@ def main(argv):
     if cleanup:
         task_name_cu = "Cleaning up directories / deleting tmp files"
         start_time_cu = malpem.mytools.start_task(task_name_cu)
-        shutil.rmtree(os.path.join(output_dir, "tmp"))
-        shutil.rmtree(os.path.join(output_dir, "tmp_fusion"))
-        shutil.rmtree(os.path.join(output_dir, "tmp_malpem"))
-        shutil.rmtree(os.path.join(output_dir, "tmp_pincram"))
-        shutil.rmtree(os.path.join(output_dir, "dofs"))
+        shutil.rmtree(os.path.join(output_dir, "tmp"), ignore_errors=True)
+        shutil.rmtree(os.path.join(output_dir, "tmp_fusion"), ignore_errors=True)
+        shutil.rmtree(os.path.join(output_dir, "tmp_malpem"), ignore_errors=True)
+        shutil.rmtree(os.path.join(output_dir, "tmp_pincram"), ignore_errors=True)
+        shutil.rmtree(os.path.join(output_dir, "dofs"), ignore_errors=True)
 	
 	malpem.mytools.finished_task(start_time_cu, task_name_cu)
 
