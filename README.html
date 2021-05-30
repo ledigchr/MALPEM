@@ -1,8 +1,13 @@
-<!DOCTYPE html><html>
+<!DOCTYPE html>
+<html>
 
 <head>
+
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <title>README</title>
+
+
 <style type="text/css">
 body {
   font-family: Helvetica, arial, sans-serif;
@@ -302,9 +307,19 @@ sup {
 	}
 }
 </style>
+
+
 </head>
+
 <body>
-<h1 id="toc_0">Introduction</h1>
+
+<h3 id="toc_0">Update:</h3>
+
+<ul>
+<li>5/30/2021: Release of <b>malpem-1.3</b>: Improved robustness, reproducibility, minor bug fixes. See <a href="https://github.com/ledigchr/MALPEM/releases">releases</a>.</li>
+</ul>
+
+<h1 id="toc_1">Introduction</h1>
 
 <p>The MALPEM distribution package consists of software and data files needed to perform a robust bias correction, brain extraction, and brain segmentation of a magnetic resonance brain image into 138 cortical and subcortical structures.</p>
 
@@ -329,7 +344,7 @@ please cite the following papers:</p>
    &quot;Brain extraction using label propagation and group agreement: pincram&quot;,
    PLoS ONE, 10(7), pp. e0129211, 2015.</p>
 
-<h1 id="toc_1">Installation</h1>
+<h1 id="toc_2">Installation</h1>
 
 <p>The MALPEM software was developed on a 64-bit Linux system (Ubuntu 14.04) and is at the
 moment only available as binary distribution which was packaged using <a href="http://reproducible.io">CARE</a>.
@@ -341,7 +356,7 @@ programs run on any Linux system and cannot interfere with other files on your s
 enable the build and native installation on any supported operating system, including
 in particular also Windows and OS X.</p>
 
-<h2 id="toc_2">Installation on Linux</h2>
+<h2 id="toc_3">Installation on Linux</h2>
 
 <p>The online installer is <a href="http://www.christianledig.com/Material/MALPEM/malpem_installer.tar">available here</a>. The installer downloads
 and extracts all required resources and executable files in the installation directory
@@ -351,10 +366,10 @@ for a successful brain segmentation workflow execution.</p>
 <p>To install MALPEM with all its resources in your home directory,
 run the following commands in a <a href="https://help.ubuntu.com/community/UsingTheTerminal">Terminal</a> window:</p>
 
-<pre><code class="language-none">cd
+<div><pre><code class="language-none">cd
 wget -O malpem_installer.tar http://www.christianledig.com/Material/MALPEM/malpem_installer.tar
 tar xf malpem_installer.tar
-./malpem_installer/malpem-install</code></pre>
+./malpem_installer/malpem-install</code></pre></div>
 
 <p>The installer will list for each additional resource the license terms under which this
 resource is made available and whether you accept these terms to proceed with the download
@@ -362,40 +377,42 @@ and installation. This will install all required programs and data files in a di
 
 <p><strong>Note</strong>: For a system wide installation, you might want to install MALPEM to e.g. <code>/opt/malpem-1.2</code> as a root user. To do this run <code>sudo ./malpem_installer/malpem-install</code>. Please note that while all files can be owned by root the directory <code>lib/care/rootfs/tmp</code> needs to  be read/writable by the user running MALPEM.</p>
 
-<p><strong>Known Problem:</strong> If you encounter a proot error (signal 11), please check this <a href="https://github.com/ledigchr/MALPEM/issues/2">issue</a>.</p>
+<p><strong>Known Problem:</strong> (fixed in malpem-1.3) If you encounter a proot error (signal 11), please check this <a href="https://github.com/ledigchr/MALPEM/issues/2">issue</a>.</p>
 
 <p><strong>Tip</strong>: The MALPEM package can be relocated by simply moving the complete installation folder.</p>
 
-<h2 id="toc_3">Installation on Windows and OS X</h2>
+<h2 id="toc_4">Installation on Windows and OS X</h2>
 
 <p>For non-Linux operating systems, a <a href="https://www.virtualbox.org">virtual machine</a> (VM) running <a href="http://www.ubuntu.com/download/desktop">Ubuntu</a> 14.04
 or a later version is recommended. A good tutorial for how to setup a VM on Mac OS can be found <a href="http://www.simplehelp.net/2015/06/09/how-to-install-ubuntu-on-your-mac/">here</a>.</p>
 
 <p><strong>Important:</strong> Make sure that the VM has enough memory (e.g. 8 GB) and disk space (e.g. 16 GB) allocated to run MALPEM.</p>
 
-<p><strong>Known Problem:</strong> If you encounter a proot error (signal 11), please check this <a href="https://github.com/ledigchr/MALPEM/issues/2">issue</a>.</p>
+<p><strong>Known Problem:</strong> (fixed in malpem-1.3) If you encounter a proot error (signal 11), please check this <a href="https://github.com/ledigchr/MALPEM/issues/2">issue</a>.</p>
 
-<h1 id="toc_4">Workflow execution</h1>
+<p><strong>WSL:</strong> MALPEM can be run with WSL. Also see the discussion on this <a href="https://github.com/ledigchr/MALPEM/issues/6">issue</a>.</p>
+
+<h1 id="toc_5">Workflow execution</h1>
 
 <p>To execute the brain segmentation workflow for a given brain MR image (e.g., <code>input.nii.gz</code>),
 including the bias correction and brain extraction steps, run the following command in a
 <a href="https://help.ubuntu.com/community/UsingTheTerminal">Terminal</a> window after changing to the MALPEM installation directory:</p>
 
-<pre><code class="language-none">cd ~/malpem-1.2
-bin/malpem-proot -i input.nii.gz -o outputDir</code></pre>
+<div><pre><code class="language-none">cd ~/malpem-1.2
+bin/malpem-proot -i input.nii.gz -o outputDir</code></pre></div>
 
 <p><strong>Note:</strong> We currently only support the <a href="http://nifti.nimh.nih.gov">NIfTI</a> image file format.</p>
 
 <p>A help screen with all the available workflow options can be displayed using the following
 command:</p>
 
-<pre><code class="language-none">bin/malpem-proot -h</code></pre>
+<div><pre><code class="language-none">bin/malpem-proot -h</code></pre></div>
 
 <p><strong>Tip:</strong> By adding the directory of your MALPEM installation (e.g. <code>$HOME/malpem-1.2/bin/</code> or <code>/opt/malpem-1.2/bin/</code>)
 to your <a href="http://www.cyberciti.biz/faq/unix-linux-adding-path/">PATH</a> environment variable, the segmentation can be executed from any
 directory by simply typing the command <code>malpem-proot</code>.</p>
 
-<h2 id="toc_5">System requirements</h2>
+<h2 id="toc_6">System requirements</h2>
 
 <p><strong>OS and CPU</strong></p>
 
@@ -422,13 +439,13 @@ These temporary files can exceed 5 GB, but will be removed after the workflow ex
 <li>The memory requirements depend on the resolution of the input image and might exceed 8 GB.</li>
 </ul>
 
-<h2 id="toc_6">Runtime</h2>
+<h2 id="toc_7">Runtime</h2>
 
 <p>The processing of an image (256x256x150) takes around 1-2 hours using 8 cores of a standard
 desktop machine (see -t option). If MALPEM is run on a single core this increases to 
 around 10 hours.</p>
 
-<h2 id="toc_7">The proot environment</h2>
+<h2 id="toc_8">The proot environment</h2>
 
 <p>The execution of MALPEM within a confined <a href="http://proot.me">proot</a> environment (cf. Installation),
 requires the use of a wrapper script (<code>bin/malpem-proot</code>) which manages the input and
@@ -441,11 +458,11 @@ Other, user supplied, input files as well as the output files of the workflow ar
 by the MALPEM wrapper script to and from this environment to make this process transparent
 to the caller.</p>
 
-<h1 id="toc_8">Example execution</h1>
+<h1 id="toc_9">Example execution</h1>
 
 <p>To test whether MALPEM is setup correctly run</p>
 
-<pre><code class="language-none">bin/malpem-proot -i atlas/pincram/limages/full/m100.nii.gz -o outputDir -t 8</code></pre>
+<div><pre><code class="language-none">bin/malpem-proot -i atlas/pincram/limages/full/m100.nii.gz -o outputDir -t 8</code></pre></div>
 
 <p>This test should finish in approximately 10 hours when executed on a single core or about 1-2 hours
 on a multi-core system with 8 threads (-t 8). The output directory will contain a binary brain mask for the
@@ -458,10 +475,12 @@ If you suspect a problem with the installation or workflow execution, please con
 
 <p><strong>Explanation of parameters:</strong></p>
 
-<pre><code class="language-none">-i atlas/pincram/limages/full/m100.nii.gz   segment one of the PINCRAM atlas images
+<div><pre><code class="language-none">-i atlas/pincram/limages/full/m100.nii.gz   segment one of the PINCRAM atlas images
 -o outputDir                                output the results to outputDir (this will be created)
 -t 8                                        parallelize using 8 threads (if your machine has less
-                                            or more CPU cores you might want to change this).</code></pre>
+                                            or more CPU cores you might want to change this).</code></pre></div>
+
+
 
 
 </body>

@@ -1,3 +1,9 @@
+### Update:###
+* 5/30/2021: Release of <b>malpem-1.3</b>: Improved robustness, reproducibility, minor bug fixes. See [releases][releases].
+
+[releases]: https://github.com/ledigchr/MALPEM/releases
+
+
 Introduction
 ============
 
@@ -68,7 +74,7 @@ and installation. This will install all required programs and data files in a di
 
 **Note**: For a system wide installation, you might want to install MALPEM to e.g. ```/opt/malpem-1.2``` as a root user. To do this run ```sudo ./malpem_installer/malpem-install```. Please note that while all files can be owned by root the directory ```lib/care/rootfs/tmp``` needs to  be read/writable by the user running MALPEM.
 
-**Known Problem:** If you encounter a proot error (signal 11), please check this [issue][issue2].
+**Known Problem:** (fixed in malpem-1.3) If you encounter a proot error (signal 11), please check this [issue][issue2].
 
 **Tip**: The MALPEM package can be relocated by simply moving the complete installation folder.
 
@@ -85,12 +91,15 @@ or a later version is recommended. A good tutorial for how to setup a VM on Mac 
 
 **Important:** Make sure that the VM has enough memory (e.g. 8 GB) and disk space (e.g. 16 GB) allocated to run MALPEM.
 
-**Known Problem:** If you encounter a proot error (signal 11), please check this [issue][issue2].
+**Known Problem:** (fixed in malpem-1.3) If you encounter a proot error (signal 11), please check this [issue][issue2].
+
+**WSL:** MALPEM can be run with WSL. Also see the discussion on this [issue][issue6].
 
 [vbox]:   https://www.virtualbox.org
 [ubuntu]: http://www.ubuntu.com/download/desktop
 [vmosx]:  http://www.simplehelp.net/2015/06/09/how-to-install-ubuntu-on-your-mac/
 [issue2]:  https://github.com/ledigchr/MALPEM/issues/2
+[issue6]: https://github.com/ledigchr/MALPEM/issues/6
 
 
 Workflow execution
