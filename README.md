@@ -184,13 +184,15 @@ This test should finish in approximately 10 hours when executed on a single core
 on a multi-core system with 8 threads (-t 8). The output directory will contain a binary brain mask for the
 test image as well as a whole brain segmentation of 138 structures.
 The volumes of the segmented structures are summarized in a PDF report file named ```m100_Report.pdf```. This report can be
-compared to [this online available example report][report] to ensure that the obtained results are
+compared to online available example reports for [malpem-1.2][report] and [malpem-1.3][report13] to confirm that the obtained results are
 similar to our results and that the framework is installed correctly.
-Please note that minor numerical differences are expected, but the volume measures should be quite similar. 
+Please note that minor numerical differences are expected for malpem-1.2 (see this [issue][issue8]), but the volume measures should be quite similar. 
 If you suspect a problem with the installation or workflow execution, please contact [Christian Ledig][contact].
 
 [report]: http://www.christianledig.com/Material/MALPEM/m100_Report.pdf
+[report13]: http://www.christianledig.com/Material/MALPEM/m100_Report_malpem_v1.3.pdf
 [contact]: http://www.christianledig.com/contact.html
+[issue8]: https://github.com/ledigchr/MALPEM/issues/8
 
 **Explanation of parameters:**
 
