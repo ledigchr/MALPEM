@@ -36,7 +36,34 @@ import errno
 import platform
 
 # MALPEM version and source URL
-version = "1.2"
+
+DEFAULT_VERSION="1.3"
+VERSIONS = {
+    "1.2": "Primary version since 2015",
+    "1.3": "(default) Updated version since 05/2021 w/ "
+           "robustness, reproducibility improvements over v1.2"
+}
+
+def get_version():
+    input_text = "\nChoose Version (for details: https://github.com/ledigchr/MALPEM)\n"
+    for k, v in VERSIONS.items():
+        input_text += "[" + k + "]: " + v + "\n"
+
+    version = raw_input(input_text)
+
+    if version == "":
+        version = DEFAULT_VERSION
+        print "Using default version " + DEFAULT_VERSION
+    else:
+        print "Using version " + version
+
+    msg = "version not in " + ','.join(VERSIONS.keys())
+    assert version in VERSIONS.keys(), msg
+
+    return version
+
+
+version = get_version()
 base_url = "http://www.christianledig.com/Material/MALPEM/"
 
 

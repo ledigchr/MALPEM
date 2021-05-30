@@ -213,7 +213,9 @@ def main(argv):
     malpem.mytools.check_ex_dir(tmp_dir)
 
     image_n4 = os.path.join(output_dir, base_file + "_N4.nii.gz")
+    image_n4_initial = os.path.join(tmp_dir, base_file + "_N4_initial.nii.gz")
     image_n4_masked = os.path.join(output_dir, base_file + "_N4_masked.nii.gz")
+    image_full_mask = os.path.join(output_dir, base_file + "_mask_full_image.nii.gz")
 
     if not do_n4:
         image_n4 = os.path.join(output_dir, base_file + "_noN4.nii.gz")
@@ -301,10 +303,10 @@ def main(argv):
 
     # Run N4 Bias Correction (ITK implementation, parameters depend on 1.5T/3T)
     if not os.path.isfile(image_n4):
-        if not os.path.isfile(image_mask):
-            malpem.bias_correction.N4(input_file, image_n4, field_strength, "", output_dir)
-        else:
-            malpem.bias_correction.N4(input_file, image_n4, field_strength, image_mask, output_dir)
+        # perform bias correction with the full image domain as foreground to avoid using unpredictable OTSU mask
+        print "Creating artificial 'full image mask' to perform bias correction on complete image domain"
+        malpem.bias_correction.get_full_image_mask(input_file, image_full_mask)
+        malpem.bias_correction.N4(input_file, image_n4, field_strength, image_full_mask, output_dir)
     else:
         print "Skipping bias correction: file exists / specified by user"
 
@@ -319,10 +321,19 @@ def main(argv):
     if not os.path.isfile(image_n4_masked):
         if not os.path.isfile(image_mask):
             malpem.brain_extraction.pincram(image_n4, image_mask, threads, output_dir)
-            # Note that the MNI transformation above was calculated with the originally N4 corrected image
-            if do_n4_pincram:
-                print "Running a second bias correction with the calculated brain mask"
-                malpem.bias_correction.N4(image_n4, image_n4, field_strength, image_mask, output_dir)
+
+        print "Transforming image/mask to ensure numerically matching headers (workaround)"
+        # Nearest neighbor interpolation since this is merely about numerical adjustment of the header
+        # and should have no effect on any pixel values
+        malpem.registration.transform(image_n4, image_mask, image_mask, "", "nn", output_dir)
+        malpem.registration.transform(image_n4, image_n4, image_n4, "", "nn", output_dir)
+
+        # Note that the MNI transformation above was calculated with the originally N4 corrected image
+        if do_n4_pincram:
+            print "Running a second bias correction with the calculated brain mask"
+            # Move file to make sure file doesn't exist if this N4 fails and MALPEM doesn't continue silently
+            shutil.move(image_n4, image_n4_initial)
+            malpem.bias_correction.N4(image_n4_initial, image_n4, field_strength, image_mask, output_dir)
 
         malpem.brain_extraction.apply_mask(image_n4, image_n4_masked, image_mask)
     else:
@@ -427,11 +438,11 @@ def main(argv):
     if cleanup:
         task_name_cu = "Cleaning up directories / deleting tmp files"
         start_time_cu = malpem.mytools.start_task(task_name_cu)
-        shutil.rmtree(os.path.join(output_dir, "tmp"))
-        shutil.rmtree(os.path.join(output_dir, "tmp_fusion"))
-        shutil.rmtree(os.path.join(output_dir, "tmp_malpem"))
-        shutil.rmtree(os.path.join(output_dir, "tmp_pincram"))
-        shutil.rmtree(os.path.join(output_dir, "dofs"))
+        shutil.rmtree(os.path.join(output_dir, "tmp"), ignore_errors=True)
+        shutil.rmtree(os.path.join(output_dir, "tmp_fusion"), ignore_errors=True)
+        shutil.rmtree(os.path.join(output_dir, "tmp_malpem"), ignore_errors=True)
+        shutil.rmtree(os.path.join(output_dir, "tmp_pincram"), ignore_errors=True)
+        shutil.rmtree(os.path.join(output_dir, "dofs"), ignore_errors=True)
 	
 	malpem.mytools.finished_task(start_time_cu, task_name_cu)
 
