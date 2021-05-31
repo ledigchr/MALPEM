@@ -150,7 +150,7 @@ def create_report(input_file, input_mask, input_seg_malpem, output_report, outpu
 
 # CREATE CSV FILES
     f = open(malpem_report_file, 'wb+')
-    f.write("ID,Structure,Volume [mm3]\n")
+    f.write("ID,Structure,Volume [ml]\n")
     f.write(total_brain_string + "," + "TotalBrain" + "," + str(total_brain_volume/1000) + "\n")
     f.write(vent_string + "," + "Ventricle" + "," + str(vent_volume/1000) + "\n")
     f.write(dgm_string + "," + "NonCortical" + "," + str(dgm_volume/1000) + "\n")
