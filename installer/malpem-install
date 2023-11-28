@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 # Copyright (c) 2015, Imperial College London, Christian Ledig
 # All rights reserved.
@@ -31,7 +31,8 @@ import os
 import sys
 import zipfile
 import tarfile
-import urllib2
+import urllib.request
+import urllib.error
 import errno
 import platform
 
@@ -49,13 +50,13 @@ def get_version():
     for k, v in VERSIONS.items():
         input_text += "[" + k + "]: " + v + "\n"
 
-    version = raw_input(input_text)
+    version = input(input_text)
 
     if version == "":
         version = DEFAULT_VERSION
-        print "Using default version " + DEFAULT_VERSION
+        print ("Using default version " + DEFAULT_VERSION)
     else:
-        print "Using version " + version
+        print ("Using version " + version)
 
     msg = "version not in " + ','.join(VERSIONS.keys())
     assert version in VERSIONS.keys(), msg
@@ -186,10 +187,10 @@ def check_ex_dir(directory):
 
         except OSError as e:
             if e.errno == errno.EACCES:
-                print "ERROR: Can't create " + directory + " due to user permissions. Install as 'root' or choose " \
-                                                           "another installation directory."
+                print ("ERROR: Can't create " + directory + " due to user permissions. Install as 'root' or choose " \
+                                                           "another installation directory.")
             else:
-                print "ERROR: Can't create " + directory + "."
+                print ("ERROR: Can't create " + directory + ".")
 
 
 def chmod_dir(dst, attr):
@@ -237,21 +238,21 @@ def hardcopy_dir(src, dst):
 # Resource installation helpers
 # ==============================================================================
 def download_resource(res, dest_file):
-    print " Downloading " + res.url + " to " + dest_file
+    print (" Downloading " + res.url + " to " + dest_file)
     try:
-        remote = urllib2.urlopen(res.url)
-    except urllib2.HTTPError as e:
-        print " The server couldn\'t fulfill the request."
-        print " Error code:" + str(e.code)
+        remote = urllib.request.urlopen(res.url)
+    except urllib.error.HTTPError as e:
+        print (" The server couldn\'t fulfill the request.")
+        print (" Error code:" + str(e.code))
         exit(1)
-    except urllib2.URLError as e:
-        print " Failed to reach a server."
-        print " Reason: " + e.reason
+    except urllib.error.URLError as e:
+        print (" Failed to reach a server.")
+        print (" Reason: " + e.reason)
         exit(1)
 
     dest_file_handle = open(dest_file, 'wb')
     meta = remote.info()
-    file_size = int(meta.getheaders("Content-Length")[0])
+    file_size = int(meta._headers[1][1])
 
     file_size_dl = 0
     block_sz = 8192
@@ -264,12 +265,12 @@ def download_resource(res, dest_file):
         dest_file_handle.write(buffer)
         status = r" %7d / %d kB [%3.2f%%]" % (file_size_dl / 1024, file_size / 1024, file_size_dl * 100. / file_size)
         status = status + chr(8)*(len(status)+1)
-        print status,
+        print (status,)
 
     dest_file_handle.close()
 
     if not os.path.isfile(dest_file):
-        print "ERROR: Failed to download resource " + res.name + " from " + res.url
+        print ("ERROR: Failed to download resource " + res.name + " from " + res.url)
         exit(1)
 
 
@@ -277,11 +278,11 @@ def download_resource(res, dest_file):
 # Note: extracted zip file content has permissions changed to 755
 def extract_resource(compressed_file, target_dir):
     if not os.path.isfile(compressed_file):
-        print "Error: " + compressed_file + " does not exist!"
+        print ("Error: " + compressed_file + " does not exist!")
         return
 
     is_zip = False
-    print " Extracting file " + compressed_file + " to " + target_dir
+    print (" Extracting file " + compressed_file + " to " + target_dir)
     if os.path.splitext(compressed_file)[1] == ".gz":
         ztf = tarfile.open(compressed_file, "r:gz")
     elif os.path.splitext(compressed_file)[1] == "bz2":
@@ -294,7 +295,7 @@ def extract_resource(compressed_file, target_dir):
 
     ztf.extractall(target_dir)
     if is_zip:
-        chmod_dir(target_dir, 0755)
+        chmod_dir(target_dir, "0755")
 
 
 def resource_request(res):
@@ -304,35 +305,35 @@ def resource_request(res):
     else:
         resource_exits = os.path.isdir(os.path.join(res.dest, res.module))
     if resource_exits:
-        print "Using existing installation of " + res.name + " in " + os.path.join(res.dest, res.module)
+        print ("Using existing installation of " + res.name + " in " + os.path.join(res.dest, res.module))
         return False
 
     # e.g. set via installer option argument
     if res.requested:
-        print "Resource was installed already."
+        print ("Resource was installed already.")
         return res.requested
 
-    print "Resource:    " + res.name
-    print "Description: " + res.desc
-    print "License:     " + res.license
-    accept = raw_input("\nAccept license and download " + res.size + "? ([y]/n) ")
+    print ("Resource:    " + res.name)
+    print ("Description: " + res.desc)
+    print ("License:     " + res.license)
+    accept = input("\nAccept license and download " + res.size + "? ([y]/n) ")
     return accept == "" or accept == "y"
 
 
 def install_resource(res):
-    print "\n-- Installing " + res.name + " -- "
+    print ("\n-- Installing " + res.name + " -- ")
 
     if not os.path.isdir(res.dest):
         try:
             os.makedirs(res.dest)
         except OSError as e:
-            print "ERROR: Could not create directory " + res.dest,
+            print ("ERROR: Could not create directory " + res.dest,)
             if e.errno == errno.EACCES:
-                print " due to user permissions",
-            print "."
+                print (" due to user permissions",)
+            print (".")
             if e.errno == errno.EACCES:
-                print "      Installation may require administrative access. Either rerun installation"
-                print "      as 'root' user or choose a different installation directory."
+                print ("      Installation may require administrative access. Either rerun installation")
+                print ("      as 'root' user or choose a different installation directory.")
             sys.exit(1)
 
     if os.path.splitext(res.url)[1] == ".zip":
@@ -344,20 +345,20 @@ def install_resource(res):
     elif os.path.splitext(res.url)[1] == ".bz2":
         res_file = "resource.tar.bz2"
     else:
-        print "ERROR: Unknown format of package resource " + res.url
+        print ("ERROR: Unknown format of package resource " + res.url)
         exit(1)
 
     res_file = os.path.join(res.dest, res_file)
     if os.path.isfile(res_file):
-        print " Removing " + res_file
+        print (" Removing " + res_file)
         os.remove(res_file)
     download_resource(res, res_file)
     extract_resource(res_file, res.dest)
     if os.path.isfile(res_file):
-        print " Removing " + res_file
+        print (" Removing " + res_file)
         os.remove(res_file)
 
-    print "-- Done! --"
+    print ("-- Done! --")
 
 
 # ==============================================================================
@@ -367,17 +368,17 @@ def configure_rootfs(malpem_dir, rootfs):
     #Configure rootfs directory of MALPEM CARE installation.
 
     rootfs_malpem_dir = os.path.join(rootfs, "malpem")
-    print "rootfs installation directory is " + rootfs_malpem_dir
+    print ("rootfs installation directory is " + rootfs_malpem_dir)
 
     if not os.path.isdir(rootfs_malpem_dir):
         os.makedirs(rootfs_malpem_dir)
 
     # this directory needs to be writable by everyone
     tmp_dir = os.path.join(rootfs, "tmp")
-    print "Changing permissions of " + tmp_dir + " to 777"
-    os.chmod(tmp_dir, 0777)
+    print ("Changing permissions of " + tmp_dir + " to 777")
+    os.chmod(tmp_dir, 0o0777)
 
-    print "Creating links from " + malpem_dir + " to " + rootfs_malpem_dir
+    print ("Creating links from " + malpem_dir + " to " + rootfs_malpem_dir)
     for d in ["atlas", "bin", "etc", "lib"]:
         hardcopy_dir(os.path.join(malpem_dir, d), os.path.join(rootfs_malpem_dir, d))
 
@@ -390,13 +391,13 @@ def install_malpem(prefix=None):
     # Prompt user for installation directory
     if not prefix:
         if os.getuid() != 0:
-            print "\nSystem-wide installation for use by all users requires administrative rights."
-            print "Run this installer as 'root' user / Administrator if you want to install MALPEM"
-            print "in a default system location. Note that the installation directory can also"
-            print "be moved at any time after the installation to a new location.\n"
+            print ("\nSystem-wide installation for use by all users requires administrative rights.")
+            print ("Run this installer as 'root' user / Administrator if you want to install MALPEM")
+            print ("in a default system location. Note that the installation directory can also")
+            print ("be moved at any time after the installation to a new location.\n")
 
         while not prefix:
-            prefix = raw_input("Enter installation directory or accept default [" + default_prefix + "]:\n")
+            prefix = input("Enter installation directory or accept default [" + default_prefix + "]:\n")
             if prefix == '':
                 prefix = default_prefix
             else:
@@ -405,17 +406,17 @@ def install_malpem(prefix=None):
                 try:
                     os.makedirs(prefix)
                 except:
-                    print "Could not create directory " + prefix
+                    print ("Could not create directory " + prefix)
                     prefix = None
-            elif raw_input(prefix + " already exists. Continue? (y/[n]) ") != 'y':
+            elif input(prefix + " already exists. Continue? (y/[n]) ") != 'y':
                 prefix = None
 
-    print "Installing MALPEM in " + prefix
+    print ("Installing MALPEM in " + prefix)
 
     # Prompt user to accept license and whether resource should be downloaded
     # make destination directory of resource an absolute path
-    print "\n" + "-" * 80
-    print "Select resources to be installed\n"
+    print ("\n" + "-" * 80)
+    print ("Select resources to be installed\n")
 
     num_requested = 0
     for res in resources:
@@ -427,14 +428,14 @@ def install_malpem(prefix=None):
     # Prompt user whether to configure rootfs directory
     rootfs = os.path.join(prefix, care.dest, care.module, "rootfs")
     if care.requested or os.path.isdir(rootfs):
-        do_configure_rootfs = raw_input("\nConfigure rootfs directory? ([y]/n) ") != "n"
+        do_configure_rootfs = input("\nConfigure rootfs directory? ([y]/n) ") != "n"
     else:
         do_configure_rootfs = False
 
     # Download and install requested resources
     if num_requested > 0:
-        print "\n" + "-" * 80
-        print "Installing requested resources"
+        print ("\n" + "-" * 80)
+        print ("Installing requested resources")
         for res in resources:
             if res.requested:
                 install_resource(res)
@@ -450,19 +451,19 @@ def install_malpem(prefix=None):
                 num_missing += 1
 
     if num_missing > 0:
-        print "\n" + "-" * 80
+        print ("\n" + "-" * 80)
         for res in resources:
             if res.module == "malpem":
                 if not os.path.isfile(os.path.join(res.dest, "bin", "malpem")):
-                    print "WARNING: Missing " + res.name + "!"
+                    print ("WARNING: Missing " + res.name + "!")
             else:
                 if not os.path.isdir(os.path.join(res.dest, res.module)):
-                    print "WARNING: Missing " + res.name + "!"
+                    print ("WARNING: Missing " + res.name + "!")
 
     # Configure rootfs directory
     if do_configure_rootfs and os.path.isdir(rootfs):
-        print "\n" + "-" * 80
-        print "Setting up rootfs"
+        print ("\n" + "-" * 80)
+        print ("Setting up rootfs")
         configure_rootfs(prefix, rootfs)
 
     return prefix, num_missing
@@ -473,11 +474,11 @@ def install_malpem(prefix=None):
 # ==============================================================================
 if __name__ == "__main__":
     if len(sys.argv) > 2:
-        print "usage: " + os.path.basename(sys.argv[0]) + " [<base_dir>]\n"
-        print "Downloads and installs the MALPEM software and its required resources.\n"
-        print "  base_dir   Installation directory. If not specified, a suitable default"
-        print "             location is suggested which can be either accepted at the prompt"
-        print "             or a different location interactively specified."
+        print ("usage: " + os.path.basename(sys.argv[0]) + " [<base_dir>]\n")
+        print ("Downloads and installs the MALPEM software and its required resources.\n")
+        print ("  base_dir   Installation directory. If not specified, a suitable default")
+        print ("             location is suggested which can be either accepted at the prompt")
+        print ("             or a different location interactively specified.")
         exit(1)
 
     base_dir = None
@@ -487,10 +488,10 @@ if __name__ == "__main__":
     [base_dir, num_missing] = install_malpem(prefix=base_dir)
 
     if num_missing > 0:
-        print "\nFound missing resources. MALPEM might not work as expected."
+        print ("\nFound missing resources. MALPEM might not work as expected.")
     else:
         malpem_bin = os.path.join(base_dir, "bin", "malpem-proot")
         if not os.path.isfile(malpem_bin):
             malpem_bin = os.path.join(base_dir, "bin", "malpem")
         if os.path.isfile(malpem_bin):
-            print "\nDone! To execute MALPEM, run: " + malpem_bin
+            print ("\nDone! To execute MALPEM, run: " + malpem_bin)
