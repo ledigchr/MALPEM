@@ -6,7 +6,14 @@ WORKDIR /app
 COPY installer installer
 RUN yes '' | ./installer/malpem-install
 
-ENV PATH=/opt/malpem-1.3/bin:$PATH \
-    PYTHONPATH=/opt/malpem-1.3/lib/care/rootfs/usr/lib/python2.7/dist-packages:$PYTHONPATH
+# it'd be a better practice to put apt-get before malpem-install
+# locate and updatedb are for the malpem-proot wrapper script
+RUN apt-get update \
+    && apt-get install -y locate libgl1-mesa-glx \
+    && apt-get clean autoclean \
+    && rm -rf /var/lib/apt/lists/* \
+    && updatedb
 
-CMD ["/opt/malpem-1.3/bin/malpem"]
+ENV PATH=/opt/malpem-1.3/bin:$PATH
+
+CMD ["/opt/malpem-1.3/bin/malpem-proot"]
